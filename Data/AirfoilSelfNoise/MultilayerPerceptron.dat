@@ -1,0 +1,79 @@
+% Flood Neural Network. Multilayer Perceptron Object.
+NumberOfInputs:
+5
+NumberOfHiddenLayers:
+1
+NumbersOfHiddenNeurons:
+9 
+NumberOfOutputs:
+1
+HiddenLayersActivationFunction:
+HyperbolicTangent 
+OutputLayerActivationFunction:
+Linear
+NameOfInputVariables:
+Frequency AngleOfAttack ChordLength SuctionSideDisplacementThickness FreestreamSpeed 
+NameOfOutputVariables:
+ScaledSoundPressureLevel 
+UnitsOfInputVariables:
+(Hz) (º) (m) (m) (m/s) 
+UnitsOfOutputVariables:
+(dB) 
+DescriptionOfInputVariables:
+None None None None None 
+DescriptionOfOutputVariables:
+None 
+MeanOfInputVariables:
+2834.55 6.76077 0.136593 50.764 0.0111127 
+StandardDeviationOfInputVariables:
+3039.83 5.91534 0.0935198 15.5313 0.013147 
+MeanOfOutputVariables:
+124.875 
+StandardDeviationOfOutputVariables:
+6.86829 
+MinimumOfInputVariables:
+200 0 0.0254 31.7 0.000400682 
+MaximumOfInputVariables:
+20000 22.2 0.3048 71.3 0.0584113 
+MinimumOfOutputVariables:
+103.38 
+MaximumOfOutputVariables:
+140.987 
+LowerBoundOfOutputVariables:
+-1e+099 
+UpperBoundOfOutputVariables:
+1e+099 
+NeuralParameters:
+-1.68479 -2.55244 -0.877284 -0.00930664 0.169748 0.0212477 2.37205 -0.0130893 2.57758 2.48246 -1.90032 -0.165864 0.468554 0.261245 0.876105 0.556085 -0.205583 0.469048 0.45842 -0.942114 -1.25988 -2.49096 0.289982 0.919439 1.12118 1.79191 -0.623508 0.526334 -0.325502 -1.39437 2.9148 2.35784 1.2451 0.263175 -0.222164 1.44467 -0.24806 -0.450642 -0.341383 -1.32645 0.142339 -0.0666192 0.162043 -2.54103 -0.931027 2.78115 0.300246 0.210915 -3.86486 -4.06664 -0.15895 -0.746047 0.202948 -0.552386 -1.4687 1.86981 0.0617784 -1.15475 -1.00599 -0.591851 1.7319 2.17924 0.352799 -2.38539 
+NumberOfIndependentParameters:
+0
+NameOfIndependentParameters:
+
+UnitsOfIndependentParameters:
+
+DescriptionOfIndependentParameters:
+
+MeanOfIndependentParameters:
+
+StandardDeviationOfIndependentParameters:
+
+MinimumOfIndependentParameters:
+
+MaximumOfIndependentParameters:
+
+LowerBoundOfIndependentParameters:
+
+UpperBoundOfIndependentParameters:
+
+IndependentParameters:
+
+PreAndPostProcessingMethod:
+MeanAndStandardDeviation
+NumericalDifferentiationMethod:
+CentralDifferences
+DisplayOutOfRangeWarning:
+0
+Display:
+1
+NumericalEpsilon:
+1e-006
