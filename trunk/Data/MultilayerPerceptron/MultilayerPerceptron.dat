@@ -1,0 +1,79 @@
+% Flood Neural Network. Multilayer Perceptron Object.
+NumberOfInputs:
+3
+NumberOfHiddenLayers:
+2
+NumbersOfHiddenNeurons:
+1 1 
+NumberOfOutputs:
+2
+HiddenLayersActivationFunction:
+Logistic Logistic 
+OutputLayerActivationFunction:
+Linear
+NameOfInputVariables:
+InputVariable0 InputVariable1 InputVariable2 
+NameOfOutputVariables:
+OutputVariable0 OutputVariable1 
+UnitsOfInputVariables:
+None None None 
+UnitsOfOutputVariables:
+None None 
+DescriptionOfInputVariables:
+None None None 
+DescriptionOfOutputVariables:
+None None 
+MeanOfInputVariables:
+0 0 0 
+StandardDeviationOfInputVariables:
+1 1 1 
+MeanOfOutputVariables:
+0 0 
+StandardDeviationOfOutputVariables:
+1 1 
+MinimumOfInputVariables:
+-1 -1 -1 
+MaximumOfInputVariables:
+1 1 1 
+MinimumOfOutputVariables:
+-1 -1 
+MaximumOfOutputVariables:
+1 1 
+LowerBoundOfOutputVariables:
+-1e+99 -1e+99 
+UpperBoundOfOutputVariables:
+1e+99 1e+99 
+NeuralParameters:
+-0.483699 -0.257113 -0.362768 0.304177 -0.343321 -0.0990556 -0.37021 -0.391191 0.498925 -0.281743 
+NumberOfIndependentParameters:
+0
+NameOfIndependentParameters:
+
+UnitsOfIndependentParameters:
+
+DescriptionOfIndependentParameters:
+
+MeanOfIndependentParameters:
+
+StandardDeviationOfIndependentParameters:
+
+MinimumOfIndependentParameters:
+
+MaximumOfIndependentParameters:
+
+LowerBoundOfIndependentParameters:
+
+UpperBoundOfIndependentParameters:
+
+IndependentParameters:
+
+PreAndPostProcessingMethod:
+None
+NumericalDifferentiationMethod:
+CentralDifferences
+DisplayOutOfRangeWarning:
+0
+Display:
+1
+NumericalEpsilon:
+1e-06
