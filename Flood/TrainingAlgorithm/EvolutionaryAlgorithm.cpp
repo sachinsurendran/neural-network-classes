@@ -1736,6 +1736,8 @@ void EvolutionaryAlgorithm::evaluatePopulation(void)
    {
       individual = getIndividual(i);
 
+      /* sachins: this is where the Evaluation using the training set is done */
+
       evaluation[i] = objectiveFunctional->calculatePotentialEvaluation(individual);
       
       if(!(evaluation[i] > -1.0e69 && evaluation[i] < 1.0e69))
