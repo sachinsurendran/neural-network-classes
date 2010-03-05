@@ -1,6 +1,6 @@
 #########################################################################
 #                                                                       #
-#   F L O O D   N E U R A L   N E T W O R K   M A K E F I L E           #
+#   E V O L U T I O N A R Y   A L G O R I T H M   M A K E F I L E       #
 #                                                                       #
 #   Roberto Lopez                                                       # 
 #   International Center for Numerical Methods in Engineering (CIMNE)   #
@@ -10,31 +10,14 @@
 #                                                                       #
 #########################################################################
 
-objects = TemplateApplication.o \
+objects = EvolutionaryAlgorithmApplication.o \
+    	  InputTargetDataSet.o \
           Perceptron.o \
           MultilayerPerceptron.o \
           ObjectiveFunctional.o \
-    	  SumSquaredError.o \
-          MeanSquaredError.o \
-          RootMeanSquaredError.o \
-          NormalizedSquaredError.o \
-          MinkowskiError.o \
-          RegularizedMinkowskiError.o \
-          BrachistochroneProblem.o \
-          IsoperimetricProblem.o \
-          CarProblem.o \
-          MinimumDragProblem.o \
+    	  MeanSquaredError.o \
           TrainingAlgorithm.o \
-          GradientDescent.o \
-          ConjugateGradient.o \
-          QuasiNewtonMethod.o \
-    	  RandomSearch.o \
-          EvolutionaryAlgorithm.o \
-    	  InputTargetDataSet.o \
-    	  LinearRegressionAnalysis.o \
-    	  CorrectPredictionsAnalysis.o \
-          IntegrationOfFunctions.o \
-          OrdinaryDifferentialEquations.o 
+          EvolutionaryAlgorithm.o
 
 
 Flood:  $(objects)
@@ -43,8 +26,14 @@ Flood:  $(objects)
 
 # Main function
 
-TemplateApplication.o: ../Applications/TemplateApplication.cpp
-	g++ -c ../Applications/TemplateApplication.cpp -o TemplateApplication.o
+EvolutionaryAlgorithmApplication.o: ../Applications/EvolutionaryAlgorithmApplication.cpp
+	g++ -c ../Applications/EvolutionaryAlgorithmApplication.cpp -o EvolutionaryAlgorithmApplication.o
+
+
+# Utilities
+
+InputTargetDataSet.o: ../Flood/Utilities/InputTargetDataSet.cpp
+	g++ -c ../Flood/Utilities/InputTargetDataSet.cpp -o InputTargetDataSet.o
 
 
 # Perceptron neuron model
@@ -53,7 +42,7 @@ Perceptron.o: ../Flood/Perceptron/Perceptron.cpp
 	g++ -c ../Flood/Perceptron/Perceptron.cpp -o Perceptron.o
 
 
-# Multilayer perceptron network architecture
+# Multilayer perceptron architecture
 
 MultilayerPerceptron.o: ../Flood/MultilayerPerceptron/MultilayerPerceptron.cpp
 	g++ -c ../Flood/MultilayerPerceptron/MultilayerPerceptron.cpp -o MultilayerPerceptron.o
@@ -64,35 +53,8 @@ MultilayerPerceptron.o: ../Flood/MultilayerPerceptron/MultilayerPerceptron.cpp
 ObjectiveFunctional.o: ../Flood/ObjectiveFunctional/ObjectiveFunctional.cpp
 	g++ -c ../Flood/ObjectiveFunctional/ObjectiveFunctional.cpp -o ObjectiveFunctional.o
 
-SumSquaredError.o: ../Flood/ObjectiveFunctional/SumSquaredError.cpp
-	g++ -c ../Flood/ObjectiveFunctional/SumSquaredError.cpp -o SumSquaredError.o
-
 MeanSquaredError.o: ../Flood/ObjectiveFunctional/MeanSquaredError.cpp
 	g++ -c ../Flood/ObjectiveFunctional/MeanSquaredError.cpp -o MeanSquaredError.o
-
-RootMeanSquaredError.o: ../Flood/ObjectiveFunctional/RootMeanSquaredError.cpp
-	g++ -c ../Flood/ObjectiveFunctional/RootMeanSquaredError.cpp -o RootMeanSquaredError.o
-
-NormalizedSquaredError.o: ../Flood/ObjectiveFunctional/NormalizedSquaredError.cpp
-	g++ -c ../Flood/ObjectiveFunctional/NormalizedSquaredError.cpp -o NormalizedSquaredError.o
-
-MinkowskiError.o: ../Flood/ObjectiveFunctional/MinkowskiError.cpp
-	g++ -c ../Flood/ObjectiveFunctional/MinkowskiError.cpp -o MinkowskiError.o
-
-RegularizedMinkowskiError.o: ../Flood/ObjectiveFunctional/RegularizedMinkowskiError.cpp
-	g++ -c ../Flood/ObjectiveFunctional/RegularizedMinkowskiError.cpp -o RegularizedMinkowskiError.o
-
-BrachistochroneProblem.o: ../Flood/ObjectiveFunctional/BrachistochroneProblem.cpp
-	g++ -c ../Flood/ObjectiveFunctional/BrachistochroneProblem.cpp -o BrachistochroneProblem.o
-
-IsoperimetricProblem.o: ../Flood/ObjectiveFunctional/IsoperimetricProblem.cpp
-	g++ -c ../Flood/ObjectiveFunctional/IsoperimetricProblem.cpp -o IsoperimetricProblem.o
-
-CarProblem.o: ../Flood/ObjectiveFunctional/CarProblem.cpp
-	g++ -c ../Flood/ObjectiveFunctional/CarProblem.cpp -o CarProblem.o
-
-MinimumDragProblem.o: ../Flood/ObjectiveFunctional/MinimumDragProblem.cpp
-	g++ -c ../Flood/ObjectiveFunctional/MinimumDragProblem.cpp -o MinimumDragProblem.o
 
 
 # Training algorithm
@@ -100,38 +62,8 @@ MinimumDragProblem.o: ../Flood/ObjectiveFunctional/MinimumDragProblem.cpp
 TrainingAlgorithm.o: ../Flood/TrainingAlgorithm/TrainingAlgorithm.cpp
 	g++ -c ../Flood/TrainingAlgorithm/TrainingAlgorithm.cpp -o TrainingAlgorithm.o
 
-GradientDescent.o: ../Flood/TrainingAlgorithm/GradientDescent.cpp
-	g++ -c ../Flood/TrainingAlgorithm/GradientDescent.cpp -o GradientDescent.o
-
-ConjugateGradient.o: ../Flood/TrainingAlgorithm/ConjugateGradient.cpp
-	g++ -c ../Flood/TrainingAlgorithm/ConjugateGradient.cpp -o ConjugateGradient.o
-
-QuasiNewtonMethod.o: ../Flood/TrainingAlgorithm/QuasiNewtonMethod.cpp
-	g++ -c ../Flood/TrainingAlgorithm/QuasiNewtonMethod.cpp -o QuasiNewtonMethod.o
-
-RandomSearch.o: ../Flood/TrainingAlgorithm/RandomSearch.cpp
-	g++ -c ../Flood/TrainingAlgorithm/RandomSearch.cpp -o RandomSearch.o
-
 EvolutionaryAlgorithm.o: ../Flood/TrainingAlgorithm/EvolutionaryAlgorithm.cpp
 	g++ -c ../Flood/TrainingAlgorithm/EvolutionaryAlgorithm.cpp -o EvolutionaryAlgorithm.o
-
-
-# Utilities
-
-InputTargetDataSet.o: ../Flood/Utilities/InputTargetDataSet.cpp
-	g++ -c ../Flood/Utilities/InputTargetDataSet.cpp -o InputTargetDataSet.o
-
-LinearRegressionAnalysis.o: ../Flood/Utilities/LinearRegressionAnalysis.cpp
-	g++ -c ../Flood/Utilities/LinearRegressionAnalysis.cpp -o LinearRegressionAnalysis.o
-
-CorrectPredictionsAnalysis.o: ../Flood/Utilities/CorrectPredictionsAnalysis.cpp
-	g++ -c ../Flood/Utilities/CorrectPredictionsAnalysis.cpp -o CorrectPredictionsAnalysis.o
-
-IntegrationOfFunctions.o: ../Flood/Utilities/IntegrationOfFunctions.cpp
-	g++ -c ../Flood/Utilities/IntegrationOfFunctions.cpp -o IntegrationOfFunctions.o
-
-OrdinaryDifferentialEquations.o: ../Flood/Utilities/OrdinaryDifferentialEquations.cpp
-	g++ -c ../Flood/Utilities/OrdinaryDifferentialEquations.cpp -o OrdinaryDifferentialEquations.o
 
 
 clean:
@@ -154,3 +86,4 @@ clean:
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+

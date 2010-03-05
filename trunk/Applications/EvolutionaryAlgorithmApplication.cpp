@@ -53,11 +53,13 @@ int main(void)
 
    InputTargetDataSet inputTargetDataSet;
 
-   inputTargetDataSet.load("../Data/EvolutionaryAlgorithm/InputTargetDataSet.dat");
+//   inputTargetDataSet.load("../Data/EvolutionaryAlgorithm/InputTargetDataSet.dat");
+
+   inputTargetDataSet.load("../Data/EvolutionaryAlgorithm/XOR.dat");
 
    // Multilayer perceptron object 
 
-   MultilayerPerceptron multilayerPerceptron(1,6,1);
+   MultilayerPerceptron multilayerPerceptron(2,6,6);
 
    // Mean squared error object
 
@@ -83,7 +85,7 @@ int main(void)
 
    evolutionaryAlgorithm.setEvaluationGoal(0.01);
    evolutionaryAlgorithm.setMaximumTime(1000.0);
-   evolutionaryAlgorithm.setMaximumNumberOfGenerations(1000);
+   evolutionaryAlgorithm.setMaximumNumberOfGenerations(10000);
 
    // Set user stuff
 
@@ -95,7 +97,41 @@ int main(void)
 
    // Save all training history
 
-   evolutionaryAlgorithm.saveTrainingHistory("../Data/EvolutionaryAlgorithm/TrainingHistory.dat");
+   //evolutionaryAlgorithm.saveTrainingHistory("../Data/EvolutionaryAlgorithm/TrainingHistory.dat");
+// Test it 
+   Vector<double> input(2, 1.0);
+   input[0] = 1.0;
+   input[1] = 0.0;
+
+
+   std::cout << std::endl
+             << "Input: " << std::endl
+             << input << std::endl;
+
+   // Calculate output from the network
+
+   Vector<double> output = multilayerPerceptron.calculateOutput(input);
+
+   std::cout << std::endl
+             << "Output: " << std::endl
+             << output << std::endl;
+
+   input[0] = 1.0;
+   input[1] = 1.0;
+
+
+   std::cout << std::endl
+             << "Input: " << std::endl
+             << input << std::endl;
+
+   // Calculate output from the network
+
+   output = multilayerPerceptron.calculateOutput(input);
+
+   std::cout << std::endl
+             << "Output: " << std::endl
+             << output << std::endl;
+
 
    std::cout << std::endl;
 
