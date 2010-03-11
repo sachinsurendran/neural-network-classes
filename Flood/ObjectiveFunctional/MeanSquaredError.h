@@ -66,7 +66,8 @@ public:
 
    void setInputTargetDataSet(InputTargetDataSet*);
 
-   // Objective functional evaluation methods
+   // Objective functional evaluation methods 
+   // sachins: Implement one of our own virtual function to evaluate a gene for the game
 
    double calculateEvaluation(void);
 
