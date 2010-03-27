@@ -78,7 +78,7 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
 
    // Selection method
 
-   selectionMethod = StochasticUniversalSampling;
+   selectionMethod = EliteSampling; // Replace this with my new method : StochasticUniversalSampling;
 
    // Recombination method
 
@@ -125,6 +125,9 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
    // Selection vector
 
    selection.resize(populationSize);
+
+   // Rank vector
+   rank.resize(populationSize);
 
    reservePopulationHistory = false;
    reserveMeanNormHistory = false;
@@ -180,7 +183,7 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(void) : TrainingAlgorithm()
 
    // Selection method
 
-   selectionMethod = StochasticUniversalSampling;
+   selectionMethod = EliteSampling;// Replace this by new fitness selection method:StochasticUniversalSampling;
 
    // Recombination method
 
@@ -337,6 +340,9 @@ void EvolutionaryAlgorithm::setPopulationSize(int newPopulationSize)
       // Set selection vector
 
       selection.resize(populationSize);
+
+      // Set rank vector
+      rank.resize(populationSize);
    }
 }
 
@@ -1773,9 +1779,8 @@ void EvolutionaryAlgorithm::performLinearRankingFitnessAssignment(void)
 
    std::sort(sortedEvaluation.begin(), sortedEvaluation.end(), std::less<double>());
 
-   // Rank vector
-
-   Vector<int> rank(populationSize);
+   // Calculate Rank vector ( temp_ranking from 0 - (populationSize-1)
+   Vector<int> temp_rank(populationSize, 0);
 
    for(int i = 0; i < populationSize; i++)
    {
@@ -1783,17 +1788,17 @@ void EvolutionaryAlgorithm::performLinearRankingFitnessAssignment(void)
       {
          if(evaluation[j] == sortedEvaluation[i])
          {
-            rank[j] = populationSize - i;
+            temp_rank[j] = populationSize - i;
          }
       }
    }
 
-   // Perform linear ranking fitness assignment
+   // Perform linear temp_ranking fitness assignment
 
    for(int i = 0; i < populationSize; i++)
    {
       fitness[i] = 2.0 - selectivePressure
-      + 2.0*(selectivePressure - 1.0)*(rank[i] - 1.0)/(populationSize - 1.0);
+      + 2.0*(selectivePressure - 1.0)*(temp_rank[i] - 1.0)/(populationSize - 1.0);
       
       if(!(fitness[i] > -1.0e69 && fitness[i] < 1.0e69))
       {
@@ -1889,7 +1894,81 @@ void EvolutionaryAlgorithm::performRouletteWheelSelection(void)
    }
 }
 
+/*
+ * Perform selection strictly based on fitness :sachins
+ */
+void EvolutionaryAlgorithm::performEliteSelection(void)
+{
 
+   // Sorted evaluation vector
+
+   Vector<double> sortedEvaluation(populationSize);
+
+   sortedEvaluation = evaluation;
+
+   std::sort(sortedEvaluation.begin(), sortedEvaluation.end(), std::less<double>());
+
+   // Rank vector
+
+   //Vector<int> rank(populationSize, 0);
+   for(int i=0; i < populationSize; i++)
+   {
+       // Initialize ranks
+       rank[i] = 0;
+   }
+
+   for(int i = 0; i < populationSize; i++)
+   {
+      for(int j = 0; j < populationSize; j++)
+      {
+         if(evaluation[j] == sortedEvaluation[i])
+         {
+            if (rank[j] == 0) {
+
+                //std::cout << "rank[" << j << "]" << " = " << populationSize - i -1 << "Eval = " << sortedEvaluation[i] << std::endl;  
+                // Give a rank if its not already given
+                rank[j] = populationSize - i -1;/* rank should range from 0 - (populationSize-1) */
+                /* Once we have given a rank i, then got to next rank, ie i++ */
+                break;
+            }
+
+         }
+      }
+   }
+
+   // Set selection vector to false
+   int countNumberOfSelectedIndividuals = 0;
+   for(int i = 0; i < populationSize; i++)
+   {
+      if (rank[i] >= populationSize/2)
+      {
+          std::cout << "Selection[" << i << "] =" << evaluation[i] << std::endl;
+          selection[i] = true;
+          countNumberOfSelectedIndividuals++;
+      } else {
+          selection[i] = false;
+      }
+   }
+   // Select half the population based on fitness
+   //
+   int numberOfSelectedIndividuals = populationSize/2;
+
+   if(countNumberOfSelectedIndividuals != numberOfSelectedIndividuals)
+   {
+      std::cerr << std::endl
+                << "Flood Error: EvolutionaryAlgorithm class." << std::endl
+                << "void performEliteSelection(void) method." << std::endl
+                << "Count number of selected individuals is not equal to number of selected individuals." 
+                << "countNumberOfSelectedIndividuals = "<< countNumberOfSelectedIndividuals << "numberOfSelectedIndividuals = " << numberOfSelectedIndividuals
+                << std::endl << std::endl;
+
+      exit(1);
+   } else {
+       std:: cout << "countNumberOfSelectedIndividuals = " << countNumberOfSelectedIndividuals
+           << "numberOfSelectedIndividuals = " << numberOfSelectedIndividuals
+           << std::endl;
+   }
+}
 // void performStochasticUniversalSamplingSelection(void) method
 //
 /// This metod performs selection with stochastic universal sampling. It selects half of the individuals from the
@@ -1956,13 +2035,42 @@ void EvolutionaryAlgorithm::performStochasticUniversalSamplingSelection(void)
       {
          if(pointer[i] <= cumulativeFitness[j] && pointer[i] > cumulativeFitness[j-1])
          {
-            selection[j] = true;
+            selection[j] = true;//sachins: BUG we have selection[j] = true, when its already true, and we count it twice
             countNumberOfSelectedIndividuals++;
          }
       }
    }
 
    // Number of selected individuals control sentence 
+   /* sachins: Check if we have atleast populationSize/2 selected individuals */
+   int count = 0;
+   int delta = 0;
+
+   for(int i = 0; i < populationSize; i++)
+   {
+       if (selection[i] == true)
+           count++;
+   }
+
+   if (populationSize/2 != count)
+   {
+       std::cerr << std::endl
+           << " Error in Stochiasting sampling, Selectedindividuals = "<< count << std::endl
+           << "Correcting it!! " << std::endl;
+
+       delta = (populationSize/2) - count;
+       for(int i = 0; i < populationSize; i++)
+       {
+           if ((selection[i] != true) && (delta > 0))
+           {
+               /* Pick some unselected population and select it to meet the count of populationSize/2 */
+               selection[i] = true;
+               delta--;
+           }
+       }
+
+   }
+   /* sachins: End of check */
 
    if(countNumberOfSelectedIndividuals != numberOfSelectedIndividuals)
    {
@@ -2023,9 +2131,9 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
 
          parent1 = getIndividual(i);
 
-         // Generate 2 offspring with parent 1
+         // Generate 1 offspring with parent 1
 
-         for(int j = 0; j < 2; j++)
+         for(int j = 0; j < 1; j++)
          {
             // Choose parent 2 at random among selected individuals   
 
@@ -2068,6 +2176,9 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
                   // Add offspring to newPopulation matrix
 
                   newPopulation.setRow(countNewPopulationSize, offspring);   
+                  countNewPopulationSize++;
+
+                  newPopulation.setRow(countNewPopulationSize, parent1);
                   
                   countNewPopulationSize++;
                }
@@ -2084,6 +2195,9 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void performIntermediateRecombination(void) method." << std::endl
                 << "Count new population size is not equal to population size." 
+                << " countNewPopulationSize = " << countNewPopulationSize 
+                << " populationSize = " << populationSize 
+                << " selection[i] count = " << count
                 << std::endl
                 << std::endl;
 
@@ -2230,6 +2344,11 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
    for(int i = 0; i < populationSize; i++)
    {
+      if (rank[i] > (populationSize - populationSize/10) )
+      {
+          // Dont dare touch the top 10%
+          continue;
+      }
       individual = getIndividual(i);
 
       for(int j = 0; j < numberOfFreeParameters; j++)
@@ -2571,6 +2690,13 @@ void EvolutionaryAlgorithm::train(void)
          case StochasticUniversalSampling:
          {
             performStochasticUniversalSamplingSelection();
+         }
+
+         break;
+
+         case EliteSampling:
+         {
+             performEliteSelection();
          }
 
          break;

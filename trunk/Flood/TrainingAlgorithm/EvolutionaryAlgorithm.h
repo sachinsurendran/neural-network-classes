@@ -42,7 +42,7 @@ public:
 
    /// Enumeration of the available training operators for selection. 
 
-   enum SelectionMethod{RouletteWheel, StochasticUniversalSampling};
+   enum SelectionMethod{RouletteWheel, StochasticUniversalSampling, EliteSampling};
 
    /// Enumeration of the available training operators for recombination.
 
@@ -77,6 +77,9 @@ private:
    /// Selected individuals in population.
 
    Vector<bool> selection;
+
+   /// Rank of individuals
+   Vector<int> rank;
    
    // Training parameters
 
@@ -311,6 +314,7 @@ public:
 
    void performRouletteWheelSelection(void);
    void performStochasticUniversalSamplingSelection(void);
+   void performEliteSelection(void);
 
 
    // Recombination methods

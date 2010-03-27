@@ -14,11 +14,12 @@
 /****************************************************************************************************************/
 
 
-#ifndef __MEANSQUAREDERROR_H__
-#define __MEANSQUAREDERROR_H__
+#ifndef __TENNIXTRAINER_H__
+#define __TENNIXTRAINER_H__
 
 #include "ObjectiveFunctional.h"
 #include "../Utilities/InputTargetDataSet.h"
+
 
 namespace Flood
 {
@@ -45,6 +46,8 @@ public:
 
    TennixTrainer(MultilayerPerceptron*, InputTargetDataSet*);
 
+   TennixTrainer(MultilayerPerceptron*);
+
 
    // DEFAULT CONSTRUCTOR
 
@@ -66,6 +69,7 @@ public:
 
    void setInputTargetDataSet(InputTargetDataSet*);
 
+
    // Objective functional evaluation methods
 
    double calculateEvaluation(void);
@@ -73,6 +77,7 @@ public:
    // Utility methods
 
    void saveInputTargetAndOutput(char*);
+
 };
 
 }

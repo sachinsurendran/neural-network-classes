@@ -19,6 +19,7 @@
 #include <math.h>
 
 #include "TennixTrainer.h"
+#include "socket/Evaluator.h"
 
 namespace Flood
 {
@@ -45,6 +46,15 @@ InputTargetDataSet* newInputTargetDataSet)
    inputTargetDataSet = newInputTargetDataSet;
 }
 
+/*
+ * Constructor for taking in a Multilayer Percepteron
+ */
+
+TennixTrainer::TennixTrainer(MultilayerPerceptron* newMultilayerPerceptron)
+: ObjectiveFunctional(newMultilayerPerceptron)
+{
+    ;
+}
 
 // DEFAULT CONSTRUCTOR
 
@@ -108,6 +118,7 @@ void TennixTrainer::setInputTargetDataSet(InputTargetDataSet* newInputTargetData
 double TennixTrainer::calculateEvaluation(void)
 {
     // Control sentence 
+    //
 
    if(multilayerPerceptron == NULL)
    {
@@ -138,9 +149,11 @@ double TennixTrainer::calculateEvaluation(void)
 
    int numberOfInputs = multilayerPerceptron->getNumberOfInputs();
    int numberOfOutputs = multilayerPerceptron->getNumberOfOutputs();
-
+/*
+ * Dont need any input set : sachins
+ */
    // Input-target data set
-
+/*
    int numberOfSamples = inputTargetDataSet->getNumberOfSamples();
    int numberOfInputVariables = inputTargetDataSet->getNumberOfInputVariables();
    int numberOfTargetVariables = inputTargetDataSet->getNumberOfTargetVariables();
@@ -154,12 +167,12 @@ double TennixTrainer::calculateEvaluation(void)
                 << "Flood Error TennixTrainer class." << std::endl 
                 << "double calculateEvaluation(void) method." << std::endl
                 << "Number of inputs and outputs in multilayer perceptron must be equal to number of input and "
-        	<< "output variables in input-target data set." << std::endl 
+                << "output variables in input-target data set." << std::endl 
                 << std::endl;
 
       exit(1);
    }
-
+*/
    // Increment number of evaluations
 
    numberOfEvaluations++;
@@ -170,28 +183,111 @@ double TennixTrainer::calculateEvaluation(void)
    Vector<double> output(numberOfOutputs, 0.0);
    Vector<double> target(numberOfOutputs, 0.0);
 
-   for(int sample = 0; sample < numberOfSamples; sample++)
-   {
-      // Input vector
+   Evaluator evaluator;
+   int game_over = false;
+   GameState gamestate;
 
-      input = inputData.getRow(sample);
+   enum game_state_variables {
+       OPPONENT_X = 0,
+       OPPONENT_Y,
+       BALL_X,
+       BALL_Y
+   };
+
+   enum NN_outputs {
+       UP = 0,
+       DOWN = 1,
+       HIT = 2
+   };
+
+   while (game_over == false)
+   {
+       int keys[3] = {0,0,0};
+       evaluator.get_game_state(&gamestate);
+
+       input[OPPONENT_X] = gamestate.opponent_x;
+       input[OPPONENT_Y] = gamestate.opponent_y;
+       input[BALL_X]     = gamestate.ball_x;
+       input[BALL_Y]     = gamestate.ball_y;
+
+       if (gamestate.game_ended == true)
+       {
+           game_over = true;
+           continue;
+       }
+
+
+      //input = inputData.getRow(sample);
+
 
       // Output vector
 
       output = multilayerPerceptron->calculateOutput(input);
 
+      //std::cout << "output[UP] = " << output[UP] << " output[DOWN] = " << output[DOWN] << "output[HIT] = " << output[HIT] << std::endl;
+
+
+      keys[UP] = keys[DOWN] = keys[HIT] = 0;
+      
+      if (output[UP] > 0) {
+        //  std::cout << "UP" << std::endl;
+          keys[UP] = 1;
+      }
+      if (output[DOWN] > 0 ) {
+          //std::cout << "DOWN" << std::endl;
+          keys[DOWN] = 1;
+      }
+      if (output[HIT] > 0 ) {
+          //std::cout << "HIT" << std::endl;
+          keys[HIT] = 1;
+      }
+
+      if (keys[UP] && keys[DOWN])
+      {
+          /* Make the stronger one be sent */
+          if (output[UP] >= output[DOWN])
+          {
+              keys[UP] = 1;
+              keys[DOWN] = 0;
+          } else {
+              keys[UP] = 0;
+              keys[DOWN] = 1;
+          }
+      }
+
+
+      evaluator.send_NN_response(keys, 3);
+
+
+
+
+
       // Target vector
 
-     target = targetData.getRow(sample);
+     //target = targetData.getRow(sample);
 
       // Sum of squares error
 
-      sumSquaredError += (output-target).dot(output-target); 
+      //sumSquaredError += (output-target).dot(output-target); 
    }
 
-   meanSquaredError = sumSquaredError/(double)numberOfSamples;
+   //meanSquaredError = sumSquaredError/(double)numberOfSamples;
 
-   return(meanSquaredError);
+   /* Greater the Fitness means lesser error, hence return -fitness */
+
+   if (gamestate.fitness < 10 && gamestate.fitness > -10)  /* Found range for inactive players */
+   {
+       std::cout << "Fitness = 70000" << std::endl;
+       return (70000); /* When player does not move a bit, penalise him */  
+   }
+
+   /* Best AI players fitness is 4800 (Note using current calculation method, needs update if it changes ) */
+
+#define BEST_AI_FITNESS 60000 // changes with fitness weightages, so recalculate everytime any change
+
+   std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
+
+   return (BEST_AI_FITNESS - gamestate.fitness);
 }
 
 

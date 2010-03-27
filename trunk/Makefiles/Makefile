@@ -10,60 +10,69 @@
 #                                                                       #
 #########################################################################
 
-objects = EvolutionaryAlgorithmApplication.o \
+objects = TennixTrainingApplication.o \
     	  InputTargetDataSet.o \
           Perceptron.o \
           MultilayerPerceptron.o \
           ObjectiveFunctional.o \
-    	  MeanSquaredError.o \
+    	  TennixTrainer.o \
+	  Socket.o\
+	  ClientSocket.o\
           TrainingAlgorithm.o \
           EvolutionaryAlgorithm.o
 
 
 Flood:  $(objects)
-	g++ $(objects) -o Flood 
+	g++ -g $(objects) -o Flood 
 
 
 # Main function
 
-EvolutionaryAlgorithmApplication.o: ../Applications/EvolutionaryAlgorithmApplication.cpp
-	g++ -c ../Applications/EvolutionaryAlgorithmApplication.cpp -o EvolutionaryAlgorithmApplication.o
+TennixTrainingApplication.o: ../Applications/TennixTrainingApplication.cpp
+	g++  -c -g  ../Applications/TennixTrainingApplication.cpp -o TennixTrainingApplication.o
 
 
 # Utilities
 
 InputTargetDataSet.o: ../Flood/Utilities/InputTargetDataSet.cpp
-	g++ -c ../Flood/Utilities/InputTargetDataSet.cpp -o InputTargetDataSet.o
+	g++  -c -g  ../Flood/Utilities/InputTargetDataSet.cpp -o InputTargetDataSet.o
 
 
 # Perceptron neuron model
 
 Perceptron.o: ../Flood/Perceptron/Perceptron.cpp
-	g++ -c ../Flood/Perceptron/Perceptron.cpp -o Perceptron.o
+	g++  -c -g  ../Flood/Perceptron/Perceptron.cpp -o Perceptron.o
 
 
 # Multilayer perceptron architecture
 
 MultilayerPerceptron.o: ../Flood/MultilayerPerceptron/MultilayerPerceptron.cpp
-	g++ -c ../Flood/MultilayerPerceptron/MultilayerPerceptron.cpp -o MultilayerPerceptron.o
+	g++  -c -g  ../Flood/MultilayerPerceptron/MultilayerPerceptron.cpp -o MultilayerPerceptron.o
 
 
 # Objective functional
 
 ObjectiveFunctional.o: ../Flood/ObjectiveFunctional/ObjectiveFunctional.cpp
-	g++ -c ../Flood/ObjectiveFunctional/ObjectiveFunctional.cpp -o ObjectiveFunctional.o
+	g++  -c -g  ../Flood/ObjectiveFunctional/ObjectiveFunctional.cpp -o ObjectiveFunctional.o
 
-MeanSquaredError.o: ../Flood/ObjectiveFunctional/MeanSquaredError.cpp
-	g++ -c ../Flood/ObjectiveFunctional/MeanSquaredError.cpp -o MeanSquaredError.o
+TennixTrainer.o: ../Flood/ObjectiveFunctional/TennixTrainer.cpp 
+	g++  -c -g  ../Flood/ObjectiveFunctional/TennixTrainer.cpp -o TennixTrainer.o
+
+Socket.o: ../Flood/ObjectiveFunctional/socket/Socket.cpp
+	g++  -c -g  ../Flood/ObjectiveFunctional/socket/Socket.cpp -o Socket.o
+
+ClientSocket.o: ../Flood/ObjectiveFunctional/socket/ClientSocket.cpp
+	g++  -c -g  ../Flood/ObjectiveFunctional/socket/ClientSocket.cpp -o ClientSocket.o
+
 
 
 # Training algorithm
 
 TrainingAlgorithm.o: ../Flood/TrainingAlgorithm/TrainingAlgorithm.cpp
-	g++ -c ../Flood/TrainingAlgorithm/TrainingAlgorithm.cpp -o TrainingAlgorithm.o
+	g++  -c -g  ../Flood/TrainingAlgorithm/TrainingAlgorithm.cpp -o TrainingAlgorithm.o
 
 EvolutionaryAlgorithm.o: ../Flood/TrainingAlgorithm/EvolutionaryAlgorithm.cpp
-	g++ -c ../Flood/TrainingAlgorithm/EvolutionaryAlgorithm.cpp -o EvolutionaryAlgorithm.o
+	g++  -c -g  ../Flood/TrainingAlgorithm/EvolutionaryAlgorithm.cpp -o EvolutionaryAlgorithm.o
 
 
 clean:
