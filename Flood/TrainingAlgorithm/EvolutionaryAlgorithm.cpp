@@ -2344,7 +2344,7 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
    for(int i = 0; i < populationSize; i++)
    {
-      if (rank[i] > (populationSize - populationSize/10) )
+      if (rank[i] > (populationSize - (populationSize/10)) )
       {
           // Dont dare touch the top 10%
           continue;
