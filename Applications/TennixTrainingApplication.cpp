@@ -51,20 +51,27 @@ int main(void)
 
    // Input-target data set object
 
-   InputTargetDataSet inputTargetDataSet;
+   //InputTargetDataSet inputTargetDataSet;
 
 //   inputTargetDataSet.load("../Data/EvolutionaryAlgorithm/InputTargetDataSet.dat");
 
-   inputTargetDataSet.load("../Data/EvolutionaryAlgorithm/XOR.dat");
+   //inputTargetDataSet.load("../Data/EvolutionaryAlgorithm/XOR.dat");
 
-   // Multilayer perceptron object 
+   // Multilayer perceptron object
+   //
+   Vector<int> numbersOfHiddenNeurons (5);
+   numbersOfHiddenNeurons[0] = 6;
+   numbersOfHiddenNeurons[1] = 6;
+   numbersOfHiddenNeurons[2] = 6;
+   numbersOfHiddenNeurons[3] = 6;
+   numbersOfHiddenNeurons[4] = 6;
 
-   MultilayerPerceptron multilayerPerceptron(2,6,6);
+   MultilayerPerceptron multilayerPerceptron(4, numbersOfHiddenNeurons, 3);
 
    // Mean squared error object
 
-   TennixTrainer 
-   tennixTrainer(&multilayerPerceptron, &inputTargetDataSet);
+   TennixTrainer
+   tennixTrainer(&multilayerPerceptron/*, &inputTargetDataSet*/);// Now just need a NN, no inputs, coz it comes from tennix server
 
    // Evolutionary algorithm object
 
@@ -78,18 +85,18 @@ int main(void)
    evolutionaryAlgorithm.setReserveStandardDeviationEvaluationHistory(true);
    evolutionaryAlgorithm.setReserveBestEvaluationHistory(true);
 
-   evolutionaryAlgorithm.setPopulationSize(100);
+   evolutionaryAlgorithm.setPopulationSize(50);
    evolutionaryAlgorithm.initPopulationNormal(0.0,1.0);
 
    // Set stopping criteria
 
-   evolutionaryAlgorithm.setEvaluationGoal(0.01);
+   evolutionaryAlgorithm.setEvaluationGoal(0.1);
    evolutionaryAlgorithm.setMaximumTime(1000.0);
-   evolutionaryAlgorithm.setMaximumNumberOfGenerations(10000);
+   evolutionaryAlgorithm.setMaximumNumberOfGenerations(1000000);
 
    // Set user stuff
 
-   evolutionaryAlgorithm.setDisplayPeriod(100);
+   evolutionaryAlgorithm.setDisplayPeriod(1);
 
    // Train neural network
 
@@ -98,7 +105,7 @@ int main(void)
    // Save all training history
 
    //evolutionaryAlgorithm.saveTrainingHistory("../Data/EvolutionaryAlgorithm/TrainingHistory.dat");
-// Test it 
+/* Test it 
    Vector<double> input(2, 1.0);
    input[0] = 1.0;
    input[1] = 0.0;
@@ -150,6 +157,7 @@ int main(void)
    std::cout << std::endl
              << "Output: " << std::endl
              << output << std::endl;
+   END TEST          */
 
 
    std::cout << std::endl;
