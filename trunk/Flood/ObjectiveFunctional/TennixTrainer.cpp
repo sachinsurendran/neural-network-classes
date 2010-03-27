@@ -271,19 +271,18 @@ double TennixTrainer::calculateEvaluation(void)
       //sumSquaredError += (output-target).dot(output-target); 
    }
 
-   //meanSquaredError = sumSquaredError/(double)numberOfSamples;
 
-   /* Greater the Fitness means lesser error, hence return -fitness */
 
-   if (gamestate.fitness < 10 && gamestate.fitness > -10)  /* Found range for inactive players */
-   {
-       std::cout << "Fitness = 70000" << std::endl;
-       return (70000); /* When player does not move a bit, penalise him */  
-   }
+#define BEST_AI_FITNESS 70000 // changes with fitness weightages, so recalculate everytime any change
+
+//   if (gamestate.fitness < 10 && gamestate.fitness > -10)  /* Found range for inactive players */
+//   {
+//       std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
+//       return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
+//   }
 
    /* Best AI players fitness is 4800 (Note using current calculation method, needs update if it changes ) */
 
-#define BEST_AI_FITNESS 60000 // changes with fitness weightages, so recalculate everytime any change
 
    std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
 

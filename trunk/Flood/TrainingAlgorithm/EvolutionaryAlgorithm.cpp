@@ -1942,7 +1942,10 @@ void EvolutionaryAlgorithm::performEliteSelection(void)
    {
       if (rank[i] >= populationSize/2)
       {
-          std::cout << "Selection[" << i << "] =" << evaluation[i] << std::endl;
+          if (rank[i] >= (populationSize - (populationSize/10)) )
+          {
+            std::cout << "Selection[" << i << "] =" << evaluation[i] << std::endl;
+          }
           selection[i] = true;
           countNumberOfSelectedIndividuals++;
       } else {
@@ -2148,7 +2151,7 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
 
                // Check if candidate for parent 2 is ok
 
-               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i)
+               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (0.97 * populationSize)))
                {
                   parent2Candidate = true;
 
@@ -2266,7 +2269,7 @@ void EvolutionaryAlgorithm::performLineRecombination(void)
 
                // Check if candidate for parent 2 is ok
 
-               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i)
+               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i ) // Make sure mate with best ones
                {
                   parent2Candidate = true;
 
@@ -2344,9 +2347,9 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
    for(int i = 0; i < populationSize; i++)
    {
-      if (rank[i] > (populationSize - (populationSize/10)) )
+      if (rank[i] > (0.98 * populationSize)) 
       {
-          // Dont dare touch the top 10%
+          // Dont dare touch the top 5%
           continue;
       }
       individual = getIndividual(i);
