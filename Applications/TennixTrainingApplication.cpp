@@ -60,13 +60,17 @@ int main(void)
    // Multilayer perceptron object
    //
    Vector<int> numbersOfHiddenNeurons (4);
-   numbersOfHiddenNeurons[0] = 10;
-   numbersOfHiddenNeurons[1] = 10;
-   numbersOfHiddenNeurons[2] = 10;
-   numbersOfHiddenNeurons[3] = 10;
-//   numbersOfHiddenNeurons[4] = 6;
+   numbersOfHiddenNeurons[0] =6;
+   numbersOfHiddenNeurons[1] =6;
+   numbersOfHiddenNeurons[2] =6;
+   numbersOfHiddenNeurons[3] =6;
+//   numbersOfHiddenNeurons[4] =6;
+//   numbersOfHiddenNeurons[5] =10;
+//   numbersOfHiddenNeurons[6] =10;
 
-   MultilayerPerceptron multilayerPerceptron(4, numbersOfHiddenNeurons, 3);
+   MultilayerPerceptron multilayerPerceptron(6, numbersOfHiddenNeurons, 3);
+
+   multilayerPerceptron.setOutputLayerActivationFunction(Perceptron::HyperbolicTangent);
 
    // Mean squared error object
 

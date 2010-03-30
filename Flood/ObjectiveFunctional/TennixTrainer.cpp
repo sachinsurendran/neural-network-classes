@@ -188,7 +188,9 @@ double TennixTrainer::calculateEvaluation(void)
    GameState gamestate;
 
    enum game_state_variables {
-       OPPONENT_X = 0,
+       DARWIN_X =0,
+       DARWIN_Y,
+       OPPONENT_X,
        OPPONENT_Y,
        BALL_X,
        BALL_Y
@@ -205,8 +207,12 @@ double TennixTrainer::calculateEvaluation(void)
        int keys[3] = {0,0,0};
        evaluator.get_game_state(&gamestate);
 
+       input[DARWIN_X]   = gamestate.darwin_x;
+       input[DARWIN_Y]   = gamestate.darwin_y;
+
        input[OPPONENT_X] = gamestate.opponent_x;
        input[OPPONENT_Y] = gamestate.opponent_y;
+
        input[BALL_X]     = gamestate.ball_x;
        input[BALL_Y]     = gamestate.ball_y;
 
@@ -230,7 +236,7 @@ double TennixTrainer::calculateEvaluation(void)
       keys[UP] = keys[DOWN] = keys[HIT] = 0;
       
       if (output[UP] > 0) {
-        //  std::cout << "UP" << std::endl;
+          //std::cout << "UP" << std::endl;
           keys[UP] = 1;
       }
       if (output[DOWN] > 0 ) {
@@ -275,15 +281,15 @@ double TennixTrainer::calculateEvaluation(void)
 
 #define BEST_AI_FITNESS 70000 // changes with fitness weightages, so recalculate everytime any change
 
-//   if (gamestate.fitness < 10 && gamestate.fitness > -10)  /* Found range for inactive players */
-//   {
-//       std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
-//       return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
-//   }
+   if (gamestate.fitness < 500 && gamestate.fitness > -500)  /* Found range for inactive players */
+   {
+       std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
+       return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
+   }
 
-   /* Best AI players fitness is 4800 (Note using current calculation method, needs update if it changes ) */
+   /* Best AI players fitness is BEST_AI_FITNESS (Note using current calculation method, needs update if it changes ) */
 
-
+//Lower the fitness value the better
    std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
 
    return (BEST_AI_FITNESS - gamestate.fitness);
