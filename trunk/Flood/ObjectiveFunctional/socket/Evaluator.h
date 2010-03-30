@@ -31,6 +31,8 @@ enum msg_type {
 class GameState
 {
     public:
+        float darwin_x;
+        float darwin_y;
 	float opponent_x;
 	float opponent_y;
 	float ball_x;
@@ -62,7 +64,7 @@ Evaluator::initiate_evaluation_session(void)
 
       try
       {
-	client_socket << init_msg;//"Test message.";
+	client_socket << init_msg;
       }
       catch ( SocketException& ) 
       {
@@ -96,6 +98,10 @@ Evaluator::get_game_state(GameState *gamestate)
     /* Get the response from tennix */
     client_socket >> tennix_resp_msg;
 
+    //std::cout << "Darwin  X = " << tennix_resp_msg.msg.darwin_x << "Y = " << tennix_resp_msg.msg.darwin_y << std::endl; 
+
+    gamestate->darwin_x = tennix_resp_msg.msg.darwin_x;
+    gamestate->darwin_y = tennix_resp_msg.msg.darwin_y;
     gamestate->opponent_y = tennix_resp_msg.msg.opponent_y;
     gamestate->opponent_x = tennix_resp_msg.msg.opponent_x;
     gamestate->ball_y = tennix_resp_msg.msg.ball_y;

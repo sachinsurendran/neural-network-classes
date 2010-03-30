@@ -2151,7 +2151,7 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
 
                // Check if candidate for parent 2 is ok
 
-               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (0.97 * populationSize)))
+               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (0.90 * populationSize)))
                {
                   parent2Candidate = true;
 
@@ -2347,7 +2347,7 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
    for(int i = 0; i < populationSize; i++)
    {
-      if (rank[i] > (0.98 * populationSize)) 
+      if (rank[i] > (0.95 * populationSize)) 
       {
           // Dont dare touch the top 5%
           continue;

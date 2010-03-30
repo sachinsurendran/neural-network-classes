@@ -25,6 +25,8 @@ struct NN_to_tennix_msg {
 
 struct tennix_to_NN_msg {
 	int msg_type;
+        float darwin_x; // Position of Darwin
+        float darwin_y;
 	float opponent_x;
 	float opponent_y;
 	float ball_x;
