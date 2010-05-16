@@ -210,6 +210,8 @@ double TennixTrainer::calculateEvaluation(void)
        input[DARWIN_X]   = gamestate.darwin_x;
        input[DARWIN_Y]   = gamestate.darwin_y;
 
+       //std::cout << "Darwin Y = " << gamestate.darwin_y << "Darwin X = " << gamestate.darwin_x << std::endl;
+
        input[OPPONENT_X] = gamestate.opponent_x;
        input[OPPONENT_Y] = gamestate.opponent_y;
 
@@ -281,11 +283,16 @@ double TennixTrainer::calculateEvaluation(void)
 
 #define BEST_AI_FITNESS 70000 // changes with fitness weightages, so recalculate everytime any change
 
+#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
+
+#ifdef PENALISE_NON_MOVER
+
    if (gamestate.fitness < 500 && gamestate.fitness > -500)  /* Found range for inactive players */
    {
        std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
        return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
    }
+#endif
 
    /* Best AI players fitness is BEST_AI_FITNESS (Note using current calculation method, needs update if it changes ) */
 
