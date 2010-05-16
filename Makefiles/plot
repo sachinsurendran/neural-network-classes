@@ -10,5 +10,23 @@ echo ""
 ln -s $LATEST_DATA_FILE gnuplot.dat
 echo "linked $LATEST_DATA_FILE to gnuplot.dat"
 
+#Check if this file has some data, else wait until some data is written
+SIZE_OF_FILE=`du $LATEST_DATA_FILE|cut -c1`
+
+echo Size = $SIZE_OF_FILE
+if [ "$SIZE_OF_FILE" = "0" ];
+then
+    echo "File size ZERO, Wait until it gets data written"
+fi
+while [ "$SIZE_OF_FILE" = "0" ];
+do
+    echo "No Data yet, Sleeping for few secs...zzzzzz"
+    sleep 4
+    #Recheck the size
+    SIZE_OF_FILE=`du $LATEST_DATA_FILE|cut -c1`
+done
+
+echo "Data found, lets plot the graph"
+
 #Get gnuplot going and plot the new data file
 gnuplot main.gp
