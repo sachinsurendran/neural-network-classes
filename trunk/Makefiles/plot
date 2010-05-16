@@ -1,0 +1,14 @@
+#Go to graph dir
+cd graph/
+echo "In Dir : graph"
+#Remove old link
+rm gnuplot.dat
+LATEST_DATA_FILE=`ls -ltr *.dat|tail -n 1|cut -d':' -f2|cut -d' ' -f2`
+echo "Latest data file is : $LATEST_DATA_FILE"
+echo ""
+#Link latest file to gnuplot.dat
+ln -s $LATEST_DATA_FILE gnuplot.dat
+echo "linked $LATEST_DATA_FILE to gnuplot.dat"
+
+#Get gnuplot going and plot the new data file
+gnuplot main.gp

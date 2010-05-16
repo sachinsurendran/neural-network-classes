@@ -21,6 +21,7 @@
 #include <time.h>
 
 #include "EvolutionaryAlgorithm.h"
+#include "gnuplot/gnuplot.h"
 
 namespace Flood
 {
@@ -2481,6 +2482,9 @@ void EvolutionaryAlgorithm::train(void)
 
    double elapsedTime = 0.0;
 
+   // Gnuplot file stuff
+   GnuPlot plot_file;
+
    // Start training
 
    time(&beginningTime);
@@ -2663,6 +2667,7 @@ void EvolutionaryAlgorithm::train(void)
 
    // Main loop
 
+
    for(int generation = 1; generation <= maximumNumberOfGenerations; generation++)
    {
       // Generate new population  
@@ -2748,6 +2753,9 @@ void EvolutionaryAlgorithm::train(void)
       evaluatePopulation();
 
       // Check for best individual
+      // sachins: reset best evalulation, so that for every population, there is a bestevaluation
+      // measured. Otherwise the best eval of earlier populations still linger around.
+      bestEvaluation = 1.0e99;
 
       for(int i = 0; i < populationSize; i++)
       {
@@ -2764,6 +2772,10 @@ void EvolutionaryAlgorithm::train(void)
             multilayerPerceptron->setFreeParameters(bestIndividual);              
          }
       }
+
+      plot_file.write(generation, bestEvaluation);
+
+
 
       // Elapsed time
 

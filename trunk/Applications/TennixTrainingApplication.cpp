@@ -59,14 +59,15 @@ int main(void)
 
    // Multilayer perceptron object
    //
-   Vector<int> numbersOfHiddenNeurons (4);
-   numbersOfHiddenNeurons[0] =6;
-   numbersOfHiddenNeurons[1] =6;
-   numbersOfHiddenNeurons[2] =6;
-   numbersOfHiddenNeurons[3] =6;
-//   numbersOfHiddenNeurons[4] =6;
-//   numbersOfHiddenNeurons[5] =10;
-//   numbersOfHiddenNeurons[6] =10;
+#define WIDTH_OF_HIDDEN_LAYER 6
+   Vector<int> numbersOfHiddenNeurons (6);
+   numbersOfHiddenNeurons[0] = WIDTH_OF_HIDDEN_LAYER;
+   numbersOfHiddenNeurons[1] = WIDTH_OF_HIDDEN_LAYER;
+   numbersOfHiddenNeurons[2] = WIDTH_OF_HIDDEN_LAYER;
+   numbersOfHiddenNeurons[3] = WIDTH_OF_HIDDEN_LAYER;
+   numbersOfHiddenNeurons[4] = WIDTH_OF_HIDDEN_LAYER;
+   numbersOfHiddenNeurons[5] = WIDTH_OF_HIDDEN_LAYER;
+//   numbersOfHiddenNeurons[6] = WIDTH_OF_HIDDEN_LAYER;
 
    MultilayerPerceptron multilayerPerceptron(6, numbersOfHiddenNeurons, 3);
 
@@ -109,59 +110,7 @@ int main(void)
    // Save all training history
 
    //evolutionaryAlgorithm.saveTrainingHistory("../Data/EvolutionaryAlgorithm/TrainingHistory.dat");
-/* Test it 
-   Vector<double> input(2, 1.0);
-   input[0] = 1.0;
-   input[1] = 0.0;
 
-
-   std::cout << std::endl
-             << "Input: " << std::endl
-             << input << std::endl;
-
-   // Calculate output from the network
-
-   Vector<double> output = multilayerPerceptron.calculateOutput(input);
-
-   std::cout << std::endl
-             << "Output: " << std::endl
-             << output << std::endl;
-
-   input[0] = 1.0;
-   input[1] = 1.0;
-
-
-   std::cout << std::endl
-             << "Input: " << std::endl
-             << input << std::endl;
-
-   // Calculate output from the network
-
-   output = multilayerPerceptron.calculateOutput(input);
-
-   std::cout << std::endl
-             << "Output: " << std::endl
-             << output << std::endl;
-
-
-   std::cout << std::endl;
-
-   input[0] = 0.0;
-   input[1] = 1.0;
-
-
-   std::cout << std::endl
-             << "Input: " << std::endl
-             << input << std::endl;
-
-   // Calculate output from the network
-
-   output = multilayerPerceptron.calculateOutput(input);
-
-   std::cout << std::endl
-             << "Output: " << std::endl
-             << output << std::endl;
-   END TEST          */
 
 
    std::cout << std::endl;
