@@ -39,6 +39,7 @@ class GameState
 	float ball_y;
         float fitness;
         char  game_ended;/* Bool which tell game ending, time to check fitness */
+	int winner;
 };
 
 class Evaluator
@@ -111,6 +112,7 @@ Evaluator::get_game_state(GameState *gamestate)
     if (tennix_resp_msg.msg.msg_type == END_GAME)
     {
         gamestate->game_ended = true;
+	gamestate->winner = tennix_resp_msg.msg.winner;
     }
 }
 

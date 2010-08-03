@@ -59,7 +59,7 @@ int main(void)
 
    // Multilayer perceptron object
    //
-#define WIDTH_OF_HIDDEN_LAYER 6
+#define WIDTH_OF_HIDDEN_LAYER 10
    Vector<int> numbersOfHiddenNeurons (6);
    numbersOfHiddenNeurons[0] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[1] = WIDTH_OF_HIDDEN_LAYER;
@@ -90,13 +90,14 @@ int main(void)
    evolutionaryAlgorithm.setReserveStandardDeviationEvaluationHistory(true);
    evolutionaryAlgorithm.setReserveBestEvaluationHistory(true);
 
-   evolutionaryAlgorithm.setPopulationSize(100);
+   evolutionaryAlgorithm.setPopulationSize(500);
    evolutionaryAlgorithm.initPopulationNormal(0.0,1.0);
+   //evolutionaryAlgorithm.initPopulationUniform(-3,3);
 
    // Set stopping criteria
 
    evolutionaryAlgorithm.setEvaluationGoal(0.1);
-   evolutionaryAlgorithm.setMaximumTime(1000.0);
+   evolutionaryAlgorithm.setMaximumTime(100000.0);
    evolutionaryAlgorithm.setMaximumNumberOfGenerations(1000000);
 
    // Set user stuff

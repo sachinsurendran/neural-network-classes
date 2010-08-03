@@ -237,7 +237,7 @@ double TennixTrainer::calculateEvaluation(void)
 
       keys[UP] = keys[DOWN] = keys[HIT] = 0;
       
-      if (output[UP] > 0) {
+      /*if (output[UP] > 0) {
           //std::cout << "UP" << std::endl;
           keys[UP] = 1;
       }
@@ -248,11 +248,25 @@ double TennixTrainer::calculateEvaluation(void)
       if (output[HIT] > 0 ) {
           //std::cout << "HIT" << std::endl;
           keys[HIT] = 1;
+      }*/
+
+      if (output[UP] > 0) {
+          //std::cout << "UP" << std::endl;
+          keys[UP] = 1;
+      }
+      else if (output[UP] < 0 ) {
+          //std::cout << "DOWN" << std::endl;
+          keys[DOWN] = 1;
       }
 
-      if (keys[UP] && keys[DOWN])
+      if (output[HIT] > 0 ) {
+          //std::cout << "HIT" << std::endl;
+          keys[HIT] = 1;
+      }
+
+      /*if (keys[UP] && keys[DOWN])
       {
-          /* Make the stronger one be sent */
+          // Make the stronger one be sent
           if (output[UP] >= output[DOWN])
           {
               keys[UP] = 1;
@@ -261,7 +275,7 @@ double TennixTrainer::calculateEvaluation(void)
               keys[UP] = 0;
               keys[DOWN] = 1;
           }
-      }
+      }*/
 
 
       evaluator.send_NN_response(keys, 3);
@@ -279,17 +293,23 @@ double TennixTrainer::calculateEvaluation(void)
       //sumSquaredError += (output-target).dot(output-target); 
    }
 
+#define BEST_AI_FITNESS 950000 // changes with fitness weightages, so recalculate everytime any change
+//#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
 
-
-#define BEST_AI_FITNESS 70000 // changes with fitness weightages, so recalculate everytime any change
-
-#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
+   /* Avinash: Check if Darwin is the winner of the game */
+   if(gamestate.winner == 1)
+   {
+      // If so print the fitness value and exit NN training.
+      std::cout << std::endl << "Evaluation goal reached - Darwin has won the game" << std::endl
+                << "Evaluation: " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
+      exit(0);
+   }
 
 #ifdef PENALISE_NON_MOVER
 
    if (gamestate.fitness < 500 && gamestate.fitness > -500)  /* Found range for inactive players */
    {
-       std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
+       //std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
        return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
    }
 #endif
@@ -297,7 +317,8 @@ double TennixTrainer::calculateEvaluation(void)
    /* Best AI players fitness is BEST_AI_FITNESS (Note using current calculation method, needs update if it changes ) */
 
 //Lower the fitness value the better
-   std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
+   //std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
+   //std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << "   Winner = " << gamestate.winner << std::endl;
 
    return (BEST_AI_FITNESS - gamestate.fitness);
 }
