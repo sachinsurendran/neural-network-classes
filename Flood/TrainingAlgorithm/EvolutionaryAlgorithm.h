@@ -53,7 +53,7 @@ public:
 
    /// Enumeration of the available training operators for mutation.
 
-   enum MutationMethod{Normal, Uniform, offspringsOnly};
+   enum MutationMethod{Normal, Uniform, OffspringsOnly};
 
 private:
 
@@ -197,6 +197,8 @@ private:
    /// Mutation training operators enumeration.
 
    MutationMethod mutationMethod;
+
+   std::string save_to_filename;
 
 public:
 
@@ -360,6 +362,8 @@ public:
    void setReserveAllTrainingHistory(bool);
 
    void saveTrainingHistory(char*);
+
+   void setSaveToFilename(char *);
 
 };
 
