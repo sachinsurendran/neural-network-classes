@@ -86,7 +86,7 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
    // Selection method
 
    //selectionMethod = EliteSampling; // Sachin: Replace StochasticUniversalSampling with my new method EliteSampling
-   selectionMethod = None;
+   selectionMethod = EliteSampling;
 
    // Avinash
    crossoverPercentage = 10;
@@ -102,7 +102,7 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
    // Mutation method
 
    //mutationMethod = Normal;
-   mutationMethod = offspringsOnly;
+   mutationMethod = OffspringsOnly;
 
    // Training parameters
 
@@ -2981,18 +2981,18 @@ void EvolutionaryAlgorithm::train(void)
       switch(fitnessAssignmentMethod)
       {
          case LinearRanking:
-         { 
-            performLinearRankingFitnessAssignment();
-	    //performDecendingRanking();
-         }
+            { 
+                performLinearRankingFitnessAssignment();
+            }
 
-         break;
+            break;
+
 	 case DecendingRanking:
-	 {
-	    performDecendingRanking();
-	 }
+	    {
+	        performDecendingRanking();
+	    }
 
-	 break;
+	    break;
       }
 
       // Selection
@@ -3068,7 +3068,7 @@ void EvolutionaryAlgorithm::train(void)
 
          break;
 
-         case offspringsOnly:
+         case OffspringsOnly:
          {
             performOffspringsOnlyMutation();
          }
@@ -3300,6 +3300,12 @@ void EvolutionaryAlgorithm::train(void)
 
       selection = newSelection;
    }
+   /* Save the Evolutionary Object into the file */
+   if (!save_to_filename.empty()) 
+   {
+       save((char *)save_to_filename.c_str());
+   }
+
 }
 
 
@@ -3374,6 +3380,10 @@ void EvolutionaryAlgorithm::print(void)
    if(fitnessAssignmentMethod == LinearRanking)
    {
       std::cout << "Linear ranking" << std::endl;
+   } 
+   else if(fitnessAssignmentMethod == DecendingRanking)
+   {
+       std::cout << "Decending ranking" << std::endl;
    }
 
    // Selection method
@@ -3387,6 +3397,10 @@ void EvolutionaryAlgorithm::print(void)
    else if(selectionMethod == StochasticUniversalSampling)
    {
       std::cout << "Stochastic universal sampling" << std::endl;
+   }
+   else if(selectionMethod == EliteSampling)
+   {
+       std::cout << "Elite Sampling" << std::endl;
    }
 
    // Recombination method
@@ -3570,49 +3584,89 @@ void EvolutionaryAlgorithm::save(char* filename)
 
    file << "FitnessAssignmentMethod:" << std::endl;
 
-   if(fitnessAssignmentMethod == LinearRanking)
+   switch (fitnessAssignmentMethod)
    {
-      file << "LinearRanking" << std::endl;
+       case LinearRanking:
+          file << "LinearRanking" << std::endl;
+          break;
+       case DecendingRanking:
+          file << "DecendingRanking" << std::endl;
+          break;
    }
 
    // Selection method
 
    file << "SelectionMethod:" << std::endl;
 
-   if(selectionMethod == RouletteWheel)
+   switch (selectionMethod)
    {
-      file << "RouletteWheel" << std::endl;
-   }
-   else if(selectionMethod == StochasticUniversalSampling)
-   {
-      file << "StochasticUniversalSampling" << std::endl;
+       case RouletteWheel:
+          file << "RouletteWheel" << std::endl;
+          break;
+
+       case StochasticUniversalSampling:
+          file << "StochasticUniversalSampling" << std::endl;
+          break;
+
+       case EliteSampling:
+          file << "EliteSampling" << std::endl;
+          break;
    }
 
    // Recombination method
 
    file << "RecombinationMethod:" << std::endl;
 
-   if(recombinationMethod == Line)
+   switch (recombinationMethod)
    {
-      file << "Line" << std::endl;
-   }
-   else if(recombinationMethod == Intermediate)
-   {
-      file << "Intermediate" << std::endl;
+       case Line:
+          file << "Line" << std::endl;
+          break;
+
+       case Intermediate:
+          file << "Intermediate" << std::endl;
+          break;
+        
+       case Standard:
+          file << "Standard" << std::endl;
+          break;
    }
 
    // Mutation method
 
    file << "MutationMethod:" << std::endl;
 
-   if(mutationMethod == Normal)
+   switch (mutationMethod)
    {
-      file << "Normal" << std::endl;
+       case Normal:
+          file << "Normal" << std::endl;
+          break;
+       
+       case Uniform:
+          file << "Uniform" << std::endl;
+          break;
+
+       case OffspringsOnly:
+          file << "OffspringsOnly" << std::endl;
+          break;
+
    }
-   else if(mutationMethod == Uniform)
+
+   // Evaluation Method
+
+   file << "EvaluationMethod:" << std::endl;
+
+   switch (evaluationMethod)
    {
-      file << "Uniform" << std::endl;
+       case SingleTrial:
+           file << "SingleTrial" << std::endl;
+           break;
+
+       case MultiTrial:
+           file << "MultiTrial" << std::endl;
+           break;
    }
+
 
    // Training parameters
 
@@ -3740,7 +3794,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Cannot open evolutionary algorithm object data file."  << std::endl
+                << "Cannot open evolutionary algorithm object data file: "<< filename  << std::endl
 				<< std::endl;
 
       exit(1);
@@ -3750,7 +3804,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       if(display)
       {
          std::cout << std::endl
-                   << "Loading evolutionary algorithm object from data file..."  
+                   << "Loading evolutionary algorithm object from data file: " << filename
                    << std::endl;
       }
    }
@@ -3808,12 +3862,12 @@ void EvolutionaryAlgorithm::load(char* filename)
 
    file >> word;
 
-   if(word != "FitnessAssingmentMethod:")
+   if(word != "FitnessAssignmentMethod:")
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "FitnessAssignmentMethod:Unknown file format."  <<  word << std::endl;
 
       exit(1);   
    }
@@ -3824,12 +3878,16 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       fitnessAssignmentMethod = LinearRanking;
    }
+   else if(word == "DecendingRanking")
+   {
+       fitnessAssignmentMethod = DecendingRanking;
+   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "LinearRanking instance:Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3843,7 +3901,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "SelectionMethod:Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3858,12 +3916,16 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       selectionMethod = StochasticUniversalSampling;
    } 
+   else if(word == "EliteSampling")
+   {
+       selectionMethod = EliteSampling;
+   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "selectionMethod instance: Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3877,7 +3939,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "RecombinationMethod:Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3892,12 +3954,16 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       recombinationMethod = Intermediate;
    } 
+   else if(word == "Standard")
+   {
+       recombinationMethod = Standard;
+   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "recombinationMethod instance: Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3911,7 +3977,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "Mutation method:Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3926,15 +3992,50 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       mutationMethod = Uniform;
    } 
+   else if(word == "OffspringsOnly")
+   {
+       mutationMethod = OffspringsOnly;
+   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format."  << std::endl;
+                << "Mutation method instance:Unknown file format."  << std::endl;
 
       exit(1);   
    }
+
+   file >> word;
+
+   if(word != "EvaluationMethod:")
+   {
+       std::cerr << std::endl
+           << "Flood Error: EvolutionaryAlgorithm class." << std::endl
+           << "void load(char*) method." << std::endl
+           << "EvaluationMethod:Unknown file format."  << std::endl;
+       exit(1);   
+   }
+
+   file >> word;
+
+   if(word == "SingleTrial")
+   {
+       evaluationMethod = SingleTrial;
+   }
+   else if(word == "MultiTrial")
+   {
+       evaluationMethod = MultiTrial;
+   }
+   else 
+   {
+       std::cerr << std::endl
+           << "Flood Error: EvolutionaryAlgorithm class." << std::endl
+           << "void load(char*) method." << std::endl
+           << "EvaluationMethod Instance:Unknown file format."  << std::endl;
+       exit(1);   
+   }
+
 
    // Training parameters
 
@@ -3947,7 +4048,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "Selective pressure:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -3959,12 +4060,12 @@ void EvolutionaryAlgorithm::load(char* filename)
 
    file >> word;
 
-   if(word != "RecombinationSize")
+   if(word != "RecombinationSize:")
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "Recombination size:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -3981,7 +4082,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "MutationRate:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -3998,7 +4099,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "MutationRange:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4017,7 +4118,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "EvaluationGoal:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4034,7 +4135,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "MaximumTime:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4051,7 +4152,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "MaximumNumberOfGenerations:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4070,7 +4171,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "Display:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4087,7 +4188,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "DisplayPeriod:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4104,7 +4205,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveElapsedTimeHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4121,7 +4222,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveMeanNormHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4138,7 +4239,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveStandardDeviationNormHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4155,7 +4256,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveBestNormHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4172,7 +4273,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveMeanEvaluationHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4189,7 +4290,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveStandardDeviationEvaluationHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4206,7 +4307,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Unknown file format. " << word << "???" <<std::endl
+                << "ReserveBestEvaluationHistory:Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4389,6 +4490,16 @@ void EvolutionaryAlgorithm::saveTrainingHistory(char* filename)
      
 }
 
+// void set_save_to_filename(char*) method
+
+/// This method sets the filename to save the Evolutionary object to  
+/// upon, completion of training.
+//
+/// @param filename Evolutionary object filename. 
+void EvolutionaryAlgorithm::setSaveToFilename(char *filename)
+{
+    save_to_filename = filename;
+}
 
 }
 
