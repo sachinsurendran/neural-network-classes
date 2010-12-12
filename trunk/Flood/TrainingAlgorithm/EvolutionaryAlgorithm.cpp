@@ -96,8 +96,8 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
 
    // Recombination method
 
-   //recombinationMethod = Intermediate;
-   recombinationMethod = Standard;
+   recombinationMethod = Intermediate; // Nash changed it to standard, not sure why, reverting it 
+   //recombinationMethod = Standard;
 
    // Mutation method
 
@@ -2297,8 +2297,9 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
                int parent2CandidateIndex = (int)(populationSize*random);
 
                // Check if candidate for parent 2 is ok
+#define TOP_PERCENTILE 0.7 // The ranking above this percentile qualify the 2nd parent for selection
 
-               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (0.90 * populationSize)))
+               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (TOP_PERCENTILE * populationSize)))
                {
                   parent2Candidate = true;
 
@@ -3086,7 +3087,6 @@ void EvolutionaryAlgorithm::train(void)
 
       //plot_file.write(generation, evaluation[rank[0]]);
       //plot_file.write(generation, evaluation[rank[0]], meanEvaluation);
-      plot_file.write(generation, evaluation[rank[0]], meanEvaluation, worstEvaluation);
 
       // Evaluation of new population
       switch(evaluationMethod)
@@ -3125,7 +3125,9 @@ void EvolutionaryAlgorithm::train(void)
             multilayerPerceptron->setFreeParameters(bestIndividual);              
          }
       }
-
+      /* The earlier best eval were showing strange values, hence put in the bestEvaluation to plot it */
+      plot_file.write(generation, bestEvaluation, meanEvaluation, worstEvaluation);
+      
       //plot_file.write(generation, bestEvaluation);
 
 
