@@ -129,15 +129,15 @@ int main(int argc, char* argv[])
 
    // Multilayer perceptron object
    //
-#define WIDTH_OF_HIDDEN_LAYER 10
-   Vector<int> numbersOfHiddenNeurons (6);
+#define WIDTH_OF_HIDDEN_LAYER 7
+   Vector<int> numbersOfHiddenNeurons (7);
    numbersOfHiddenNeurons[0] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[1] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[2] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[3] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[4] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[5] = WIDTH_OF_HIDDEN_LAYER;
-//   numbersOfHiddenNeurons[6] = WIDTH_OF_HIDDEN_LAYER;
+   numbersOfHiddenNeurons[6] = WIDTH_OF_HIDDEN_LAYER;
 
    MultilayerPerceptron multilayerPerceptron(6, numbersOfHiddenNeurons, 3);
 
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 
    EvolutionaryAlgorithm evolutionaryAlgorithm(&tennixTrainer);
 
-   evolutionaryAlgorithm.setPopulationSize(100);
+   evolutionaryAlgorithm.setPopulationSize(50);
 
    if (command_type == LOAD_FROM_FILE) {
        evolutionaryAlgorithm.load(argv[2]);
