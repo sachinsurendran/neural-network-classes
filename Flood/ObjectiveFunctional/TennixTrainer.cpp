@@ -237,7 +237,7 @@ double TennixTrainer::calculateEvaluation(void)
 
       keys[UP] = keys[DOWN] = keys[HIT] = 0;
       
-      /*if (output[UP] > 0) {
+      if (output[UP] > 0) {
           //std::cout << "UP" << std::endl;
           keys[UP] = 1;
       }
@@ -248,8 +248,8 @@ double TennixTrainer::calculateEvaluation(void)
       if (output[HIT] > 0 ) {
           //std::cout << "HIT" << std::endl;
           keys[HIT] = 1;
-      }*/
-
+      }
+/*
       if (output[UP] > 0) {
           //std::cout << "UP" << std::endl;
           keys[UP] = 1;
@@ -262,20 +262,40 @@ double TennixTrainer::calculateEvaluation(void)
       if (output[HIT] > 0 ) {
           //std::cout << "HIT" << std::endl;
           keys[HIT] = 1;
-      }
+      } */
 
-      /*if (keys[UP] && keys[DOWN])
+      /* The difference between UP and DOWN needs to be greater than a threshold , else the player just stands where it is */
+
+#define THRESHOLD 0.2
+
+      if (keys[UP] && keys[DOWN])
       {
           // Make the stronger one be sent
           if (output[UP] >= output[DOWN])
           {
-              keys[UP] = 1;
-              keys[DOWN] = 0;
+//              if (output[UP] - output[DOWN] > THRESHOLD )
+//              {
+                keys[UP] = 1;
+                keys[DOWN] = 0;
+//              } else {
+//                  keys[UP] = keys[DOWN] = 0;
+//              }
           } else {
-              keys[UP] = 0;
-              keys[DOWN] = 1;
+//              if (output[DOWN] - output[UP] > THRESHOLD )
+//              {
+                keys[UP] = 0;
+                keys[DOWN] = 1;
+//              } else {
+//                  keys[UP] = keys[DOWN] = 0;
+//              }
           }
-      }*/
+      }
+
+#ifdef TEST_FITNESS_FOR_NO_INPUT
+      // Used to test fitness for a player which does not move nor hit, This data can be used to 
+      // determine the window to penalize non moving players
+      keys[UP] = keys[DOWN] = keys[HIT] = 0;
+#endif
 
 
       evaluator.send_NN_response(keys, 3);
@@ -294,7 +314,7 @@ double TennixTrainer::calculateEvaluation(void)
    }
 
 #define BEST_AI_FITNESS 950000 // changes with fitness weightages, so recalculate everytime any change
-//#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
+#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
 
    /* Avinash: Check if Darwin is the winner of the game */
    if(gamestate.winner == 1)
@@ -307,10 +327,11 @@ double TennixTrainer::calculateEvaluation(void)
 
 #ifdef PENALISE_NON_MOVER
 
-   if (gamestate.fitness < 500 && gamestate.fitness > -500)  /* Found range for inactive players */
+   if (gamestate.fitness < 0 && gamestate.fitness > -500)  /* Found range for inactive players */
    {
+       /* Calculate the NONMOVER score using  TEST_FITNESS_FOR_NO_INPUT */
        //std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
-       return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
+       return (BEST_AI_FITNESS + 30000); /* When player does not move a bit, penalise him */  
    }
 #endif
 

@@ -80,8 +80,9 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
 
    // Fitness assignment method
 
-   //fitnessAssignmentMethod = LinearRanking;
-   fitnessAssignmentMethod = DecendingRanking;
+   fitnessAssignmentMethod = LinearRanking;
+   // Something which nash implemented!, need to check how it is different from linear one
+   //fitnessAssignmentMethod = DecendingRanking;
 
    // Selection method
 
@@ -2297,7 +2298,7 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
                int parent2CandidateIndex = (int)(populationSize*random);
 
                // Check if candidate for parent 2 is ok
-#define TOP_PERCENTILE 0.7 // The ranking above this percentile qualify the 2nd parent for selection
+#define TOP_PERCENTILE 0.9 // The ranking above this percentile qualify the 2nd parent for selection
 
                if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (TOP_PERCENTILE * populationSize)))
                {
@@ -2587,9 +2588,9 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
    for(int i = 0; i < populationSize; i++)
    {
-      if (rank[i] > (0.95 * populationSize)) 
+      if (rank[i] > (0.90 * populationSize)) 
       {
-          // Dont dare touch the top 5%
+          // Dont dare touch the top 10%
           continue;
       }
       individual = getIndividual(i);
