@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+Experiments with Genetic Algorithm 
 
 = Introduction =
 
@@ -35,6 +35,4 @@ Code Infrastructure:
 Tennix: http://code.google.com/p/tennix/source/browse/#svn%2Ftrunk
 
 Neural Network & Genetics Engine: http://code.google.com/p/neural-network-classes/source/browse/#svn%2Ftrunk
-
-
 
