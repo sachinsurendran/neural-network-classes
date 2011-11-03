@@ -33,7 +33,6 @@ struct tennix_to_NN_msg {
 	float ball_y;
 	int seq_no;
         float fitness;
-	int winner;
 };
 
 

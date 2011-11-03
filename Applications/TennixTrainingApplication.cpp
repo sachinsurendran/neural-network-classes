@@ -19,7 +19,6 @@
 
 #include <iostream>
 #include <time.h>
-#include <string.h>
 
 // Utilities includes
 
@@ -40,84 +39,15 @@
 
 #include "../Flood/TrainingAlgorithm/EvolutionaryAlgorithm.h"
 
-
 using namespace Flood;
 
-enum command_line_options {
-    NO_ARGS,
-    LOAD_FROM_FILE,
-    SAVE_TO_FILE,
-    SAVE_TO_FILE_ON_SIGNAL /* Not implemented */
-};
-
-/*
- *  Usage:
- *  Flood -l <Filename to load Genome from>
- *  Flood -s <Filename to save Genome to upon meeting required conditions>
- *  Flood
- *
- */
-
-static int command_parser(int argc, char* argv[])
+int main(void)
 {
-    int command_type;
-
-#ifdef COMMAND_PARSER_DEBUG
-   /* Command line Arguments dump */
-   std::cout << "argc = " << argc << std::endl; 
-   for(int i = 0; i < argc; i++) {
-       std::cout << "argv[" << i << "] = " << argv[i] << std::endl; 
-   }
-#endif
-
-   if (argc == 3)
-   {
-       if (strncmp(argv[1],"-l",2) == 0)
-       {
-           /* -l options for load from file */
-#ifdef COMMAND_PARSER_DEBUG
-           std::cout << "Loading file" << std::endl;
-#endif /* COMMAND_PARSER_DEBUG */
-           command_type = LOAD_FROM_FILE;
-       }
-       else if (strncmp(argv[1],"-s",2) == 0)
-       {
-           /* -s option for save to file */
-#ifdef COMMAND_PARSER_DEBUG
-           std::cout << "Save file" << std::endl;
-#endif /* COMMAND_PARSER_DEBUG */
-           command_type = SAVE_TO_FILE;
-       }
-       else {
-#ifdef COMMAND_PARSER_DEBUG
-           std::cout << "No args" << std::endl;
-#endif /* COMMAND_PARSER_DEBUG */
-           command_type = NO_ARGS;
-       }
-
-   } else {
-       std::cout << "No args" << std::endl;
-       command_type = NO_ARGS;
-   }
-
-   return command_type;
-
-}
-
-int main(int argc, char* argv[])
-{
-
-   int command_type;
-
    std::cout << std::endl
              << "Flood Neural Network. EvolutionaryAlgorithm Application." 
              << std::endl;	
 
    srand((unsigned)time(NULL));
-
-   
-   command_type = command_parser(argc, argv);
-
 
    // Input-target data set object
 
@@ -129,15 +59,15 @@ int main(int argc, char* argv[])
 
    // Multilayer perceptron object
    //
-#define WIDTH_OF_HIDDEN_LAYER 7
-   Vector<int> numbersOfHiddenNeurons (7);
+#define WIDTH_OF_HIDDEN_LAYER 6
+   Vector<int> numbersOfHiddenNeurons (6);
    numbersOfHiddenNeurons[0] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[1] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[2] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[3] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[4] = WIDTH_OF_HIDDEN_LAYER;
    numbersOfHiddenNeurons[5] = WIDTH_OF_HIDDEN_LAYER;
-   numbersOfHiddenNeurons[6] = WIDTH_OF_HIDDEN_LAYER;
+//   numbersOfHiddenNeurons[6] = WIDTH_OF_HIDDEN_LAYER;
 
    MultilayerPerceptron multilayerPerceptron(6, numbersOfHiddenNeurons, 3);
 
@@ -149,45 +79,29 @@ int main(int argc, char* argv[])
    tennixTrainer(&multilayerPerceptron/*, &inputTargetDataSet*/);// Now just need a NN, no inputs, coz it comes from tennix server
 
    // Evolutionary algorithm object
-   //
 
    EvolutionaryAlgorithm evolutionaryAlgorithm(&tennixTrainer);
 
-   evolutionaryAlgorithm.setPopulationSize(50);
+   evolutionaryAlgorithm.setReservePopulationHistory(true);
+   evolutionaryAlgorithm.setReserveMeanNormHistory(true);
+   evolutionaryAlgorithm.setReserveStandardDeviationNormHistory(true);
+   evolutionaryAlgorithm.setReserveBestNormHistory(true);
+   evolutionaryAlgorithm.setReserveMeanEvaluationHistory(true);
+   evolutionaryAlgorithm.setReserveStandardDeviationEvaluationHistory(true);
+   evolutionaryAlgorithm.setReserveBestEvaluationHistory(true);
 
-   if (command_type == LOAD_FROM_FILE) {
-       evolutionaryAlgorithm.load(argv[2]);
-   } else {
-       /* Initialise the Evolutionary algo instance */
+   evolutionaryAlgorithm.setPopulationSize(100);
+   evolutionaryAlgorithm.initPopulationNormal(0.0,1.0);
 
+   // Set stopping criteria
 
-       evolutionaryAlgorithm.setMaximumNumberOfGenerations(1000000);
-       evolutionaryAlgorithm.setReservePopulationHistory(true);
-       evolutionaryAlgorithm.setReserveMeanNormHistory(true);
-       evolutionaryAlgorithm.setReserveStandardDeviationNormHistory(true);
-       evolutionaryAlgorithm.setReserveBestNormHistory(true);
-       evolutionaryAlgorithm.setReserveMeanEvaluationHistory(true);
-       evolutionaryAlgorithm.setReserveStandardDeviationEvaluationHistory(true);
-       evolutionaryAlgorithm.setReserveBestEvaluationHistory(true);
+   evolutionaryAlgorithm.setEvaluationGoal(0.1);
+   evolutionaryAlgorithm.setMaximumTime(1000.0);
+   evolutionaryAlgorithm.setMaximumNumberOfGenerations(1000000);
 
-       evolutionaryAlgorithm.initPopulationNormal(0.0,1.0);
-       //evolutionaryAlgorithm.initPopulationUniform(-3,3);
+   // Set user stuff
 
-       // Set stopping criteria
-
-       evolutionaryAlgorithm.setEvaluationGoal(0.1);
-       evolutionaryAlgorithm.setMaximumTime(100000.0);
-
-       // Set user stuff
-
-       evolutionaryAlgorithm.setDisplayPeriod(1); 
-       // Filename to save evolutionary object upon completion of objective
-       if (command_type == SAVE_TO_FILE) 
-       {
-           /* If the command line arg specifies a file save, remember the filename to save to */
-            evolutionaryAlgorithm.setSaveToFilename(argv[2]);
-       }
-   }
+   evolutionaryAlgorithm.setDisplayPeriod(1);
 
    // Train neural network
 

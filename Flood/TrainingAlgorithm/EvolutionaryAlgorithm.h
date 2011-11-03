@@ -36,24 +36,21 @@ public:
 
    // ENUMERATIONS
 
-   /// Avinash: Enumeration of the available evaluation methods.
-   enum EvaluationMethod{SingleTrial, MultiTrial};
-
    /// Enumeration of the available training operators for fitness assignment.
 
-   enum FitnessAssignmentMethod{LinearRanking, DecendingRanking};
+   enum FitnessAssignmentMethod{LinearRanking};
 
    /// Enumeration of the available training operators for selection. 
 
-   enum SelectionMethod{RouletteWheel, StochasticUniversalSampling, EliteSampling, None};
+   enum SelectionMethod{RouletteWheel, StochasticUniversalSampling, EliteSampling};
 
    /// Enumeration of the available training operators for recombination.
 
-   enum RecombinationMethod{Line, Intermediate, Standard};
+   enum RecombinationMethod{Line, Intermediate};
 
    /// Enumeration of the available training operators for mutation.
 
-   enum MutationMethod{Normal, Uniform, OffspringsOnly};
+   enum MutationMethod{Normal, Uniform};
 
 private:
 
@@ -70,9 +67,6 @@ private:
    Matrix<double> population;
 
    /// Evaluation of population.
-
-   /// Number of evaluations trials per individual
-   int numberOfTrials;
 
    Vector<double> evaluation;
 
@@ -96,10 +90,6 @@ private:
 
    /// Recombination size. 
    /// The recombination size value must be equal or greater than 0.
-
-   /* Avinash: Percentage of top performers to chosen from the population for crossover.
-               The crossover percentage must be value between 0 and 100 */
-   double crossoverPercentage;
 
    double recombinationSize;
 
@@ -179,9 +169,6 @@ private:
 
    Vector<double> bestEvaluationHistory;
 
-   /// Evaluation method training operator.
-   EvaluationMethod evaluationMethod;
-
    /// Fitness assignment training operators enumeration.
 
    FitnessAssignmentMethod fitnessAssignmentMethod;
@@ -197,8 +184,6 @@ private:
    /// Mutation training operators enumeration.
 
    MutationMethod mutationMethod;
-
-   std::string save_to_filename;
 
 public:
 
@@ -319,13 +304,11 @@ public:
 
    // Population evaluation methods
 
-   void evaluatePopulation_singleTrial(void);
-   void evaluatePopulation_multiTrial(void);
+   void evaluatePopulation(void);
 
    // Fitness assignment methods
 
    void performLinearRankingFitnessAssignment(void);
-   void performDecendingRanking(void);
 
    // Selection methods
 
@@ -338,13 +321,11 @@ public:
 
    void performIntermediateRecombination(void);
    void performLineRecombination(void);
-   void performStandardRecombination(void);
 
    // Mutation methods
 
    void performNormalMutation(void);
    void performUniformMutation(void);
-   void performOffspringsOnlyMutation(void);
 
    // Train methods
 
@@ -362,8 +343,6 @@ public:
    void setReserveAllTrainingHistory(bool);
 
    void saveTrainingHistory(char*);
-
-   void setSaveToFilename(char *);
 
 };
 

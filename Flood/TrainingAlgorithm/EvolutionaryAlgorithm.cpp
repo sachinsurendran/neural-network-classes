@@ -19,7 +19,6 @@
 #include <functional>
 #include <math.h>
 #include <time.h>
-//#include <conio.h>
 
 #include "EvolutionaryAlgorithm.h"
 #include "gnuplot/gnuplot.h"
@@ -74,36 +73,21 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
 
    int numberOfFreeParameters = multilayerPerceptron->getNumberOfFreeParameters();
 
-   // Avinash: Evaluation method
-   //evaluationMethod = MultiTrial;
-   evaluationMethod = SingleTrial;
-
    // Fitness assignment method
 
    fitnessAssignmentMethod = LinearRanking;
-   // Something which nash implemented!, need to check how it is different from linear one
-   //fitnessAssignmentMethod = DecendingRanking;
 
    // Selection method
 
-   //selectionMethod = EliteSampling; // Sachin: Replace StochasticUniversalSampling with my new method EliteSampling
-   selectionMethod = EliteSampling;
-
-   // Avinash
-   crossoverPercentage = 10;
-
-   // Avinash
-   numberOfTrials = 2;
+   selectionMethod = EliteSampling; // Replace this with my new method : StochasticUniversalSampling;
 
    // Recombination method
 
-   recombinationMethod = Intermediate; // Nash changed it to standard, not sure why, reverting it 
-   //recombinationMethod = Standard;
+   recombinationMethod = Intermediate;
 
    // Mutation method
 
-   //mutationMethod = Normal;
-   mutationMethod = OffspringsOnly;
+   mutationMethod = Normal;
 
    // Training parameters
 
@@ -194,9 +178,6 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(ObjectiveFunctional* newObjectiveFu
 
 EvolutionaryAlgorithm::EvolutionaryAlgorithm(void) : TrainingAlgorithm()
 {
-   // Avinash: Evaluation method
-   evaluationMethod = MultiTrial;
-
    // Fitness assignment method
 
    fitnessAssignmentMethod = LinearRanking;
@@ -204,8 +185,6 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(void) : TrainingAlgorithm()
    // Selection method
 
    selectionMethod = EliteSampling;// Replace this by new fitness selection method:StochasticUniversalSampling;
-
-   //crossoverPercentage = 10;
 
    // Recombination method
 
@@ -225,12 +204,6 @@ EvolutionaryAlgorithm::EvolutionaryAlgorithm(void) : TrainingAlgorithm()
 
    mutationRate = 0.1;
    mutationRange = 0.1;
-
-   // Avinash
-   crossoverPercentage = 10;
-
-   // Avinash
-   numberOfTrials = 2;
 
    // Stopping criteria
 
@@ -1747,14 +1720,14 @@ void EvolutionaryAlgorithm::initPopulationNormal(Matrix<double> meanAndStandardD
 }
 
 
-// void evaluatePopulation_singleTrial(void) method
+// void evaluatePopulation(void) method
 
 /// This method evaluates the objective functional of all individuals in the population. 
 /// Results are stored in the evaluation vector.
 ///
 /// @see train(void).
 
-void EvolutionaryAlgorithm::evaluatePopulation_singleTrial(void)
+void EvolutionaryAlgorithm::evaluatePopulation(void)
 {
    // Multilayer perceptron
 
@@ -1778,89 +1751,13 @@ void EvolutionaryAlgorithm::evaluatePopulation_singleTrial(void)
       {
          std::cerr << std::endl
                    << "Flood Error: EvolutionaryAlgorithm class." << std::endl
-                   << "void evaluatePopulation_singleEvaluation(void) method." << std::endl
+                   << "void evaluatePopulation(void) method." << std::endl
                    << "Evaluation of individual " << i << " is not a real number." << std::endl
                    << std::endl;
 
          exit(1);
-      }
-
-      std::cout << i+1 << ". Fitness = " << evaluation[i] << std::endl;
+      }                
    }
-}
-
-
-// void evaluatePopulation_multiTrial(void) method
-
-/// This method evaluates the objective functional of all individuals in the population. 
-/// Results are stored in the evaluation vector.
-///
-/// @see train(void).
-
-void EvolutionaryAlgorithm::evaluatePopulation_multiTrial(void)
-{
-   // Multilayer perceptron
-
-   MultilayerPerceptron* multilayerPerceptron = objectiveFunctional->getMultilayerPerceptron();
-
-   int numberOfFreeParameters = multilayerPerceptron->getNumberOfFreeParameters();
-
-   Vector<double> individual(numberOfFreeParameters);
-
-   Matrix<double> individualTrialEvaluation(numberOfTrials, populationSize);
-
-   // Evaluate objective functional for all individuals
-
-   for(int i = 0; i < numberOfTrials; i++)
-   {
-      for(int j = 0; j < populationSize; j++)
-      {
-         individual = getIndividual(j);
-
-         /* sachins: this is where the Evaluation using the training set is done */
-
-         individualTrialEvaluation[i][j] = objectiveFunctional->calculatePotentialEvaluation(individual);
-      
-         if(!(individualTrialEvaluation[i][j] > -1.0e69 && individualTrialEvaluation[i][j] < 1.0e69))
-         {
-            std::cerr << std::endl
-                      << "Flood Error: EvolutionaryAlgorithm class." << std::endl
-                      << "void evaluatePopulation_MultiEvaluation(void) method." << std::endl
-                      << "Evaluation of individual " << i << " is not a real number." << std::endl
-                      << std::endl;
-
-            exit(1);
-         }
-
-         if(i >= numberOfTrials-1)
-         {
-            double individualMeanEvaluation = 0;
-            std::cout << std::endl << "   Individual: " << j+1 << std::endl;
-            for(int trial = 0; trial < numberOfTrials; trial++)
-            {
-               individualMeanEvaluation += individualTrialEvaluation[trial][j];
-	       std::cout << "Trial " << trial+1 << ": " << individualTrialEvaluation[trial][j] << std::endl;
-            }
-            evaluation[j] = individualMeanEvaluation/(double)numberOfTrials;
-	    std::cout << "   Mean: " << evaluation[j] << std::endl;          
-         }
-         else
-         {
-            std::cout << j+1 << ". Fitness = " << individualTrialEvaluation[i][j] << std::endl;
-         }                
-      }
-   }
-
-   /*for(int i = 0; i < populationSize; i++)
-   {
-      double individualMeanEvaluation = 0;
-
-      for(int j = 0; j < numberOfTrials; j++)
-      {         
-         individualMeanEvaluation += individualTrialEvaluation[j][i];
-      }
-      evaluation[i] = individualMeanEvaluation/(double)numberOfTrials;
-   }*/
 }
 
 
@@ -1915,50 +1812,6 @@ void EvolutionaryAlgorithm::performLinearRankingFitnessAssignment(void)
          exit(1);
       }          
    }
-}
-
-#define FITNESS_MAX 990000
-
-void EvolutionaryAlgorithm::performDecendingRanking(void)
-{
-   // Sorted evaluation vector
-
-   Vector<double> clonedEvaluation(populationSize);
-
-   clonedEvaluation = evaluation;
-
-   //std::sort(sortedEvaluation.begin(), sortedEvaluation.end(), std::less<double>());
-
-   // Calculate Rank vector. temp_rank holds the index of the individuals in the population.
-   Vector<int> temp_rank(populationSize, 0);
-
-   for(int i = 0; i < populationSize; i++)
-   {
-      temp_rank[i] = 0;
-      for(int j = 0; j < populationSize; j++)
-      {
-	 if(clonedEvaluation[j] < clonedEvaluation[temp_rank[i]])
-	 {
-	    temp_rank[i] = j;
-	 }
-      }
-      clonedEvaluation[temp_rank[i]] = FITNESS_MAX;
-   }
-
-/*   for(int i = 0; i < populationSize; i++)
-   {
-      std::cout << i << ". " << evaluation[i] << std::endl;
-   }
-   std::cout << std::endl << std::endl;*/
-   //getchar();
-
-   rank = temp_rank;
-
-   for(int i = 0; i < populationSize; i++)
-   {
-      std::cout << i+1 << ". " << evaluation[rank[i]] << std::endl;
-   }
-   //getchar();
 }
 
 // void performRouletteWheelSelection(void) method
@@ -2298,9 +2151,8 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
                int parent2CandidateIndex = (int)(populationSize*random);
 
                // Check if candidate for parent 2 is ok
-#define TOP_PERCENTILE 0.9 // The ranking above this percentile qualify the 2nd parent for selection
 
-               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (TOP_PERCENTILE * populationSize)))
+               if(selection[parent2CandidateIndex] == true && parent2CandidateIndex != i && (rank[parent2CandidateIndex] > (0.90 * populationSize)))
                {
                   parent2Candidate = true;
 
@@ -2330,8 +2182,8 @@ void EvolutionaryAlgorithm::performIntermediateRecombination(void)
                   newPopulation.setRow(countNewPopulationSize, offspring);   
                   countNewPopulationSize++;
 
-		  // Add parent 1 to newPopulation matrix
                   newPopulation.setRow(countNewPopulationSize, parent1);
+                  
                   countNewPopulationSize++;
                }
             }while(parent2Candidate != true);
@@ -2436,17 +2288,15 @@ void EvolutionaryAlgorithm::performLineRecombination(void)
 
                   double random = (double)rand()/(RAND_MAX+1.0);
 
-                  double scalingFactor = -1.0*recombinationSize + (1.0 + recombinationSize)*random;
+                  double scalingFactor = -1.0*recombinationSize 
+                  + (1.0 + recombinationSize)*random;
 
                   offspring = parent1*scalingFactor + parent2*(1.0 - scalingFactor);
 
                   // Add offspring to newPopulation matrix
 
                   newPopulation.setRow(countNewPopulationSize, offspring);   
-                  countNewPopulationSize++;
 
-		  // Add parent 1 to newPopulation matrix
-                  newPopulation.setRow(countNewPopulationSize, parent1);
                   countNewPopulationSize++;
                }
             }while(parent2Candidate == false);
@@ -2472,97 +2322,6 @@ void EvolutionaryAlgorithm::performLineRecombination(void)
    population = newPopulation;
 }
 
-void EvolutionaryAlgorithm::performStandardRecombination(void)
-{
-   MultilayerPerceptron* multilayerPerceptron = objectiveFunctional->getMultilayerPerceptron();
-     
-   int numberOfFreeParameters = multilayerPerceptron->getNumberOfFreeParameters();
-
-   Matrix<double> newPopulation(populationSize, numberOfFreeParameters);
-
-
-   Vector<double> parent1(numberOfFreeParameters);
-   Vector<double> parent2(numberOfFreeParameters);
-
-   Vector<double> offspring(numberOfFreeParameters);
-
-   Matrix<int> recombination(populationSize, 2);
-
-   // Start recombination   
-
-   int countNewPopulationSize = 0;
-   int parentPopulationSize = ((double)populationSize/100.0)*(double)crossoverPercentage;
-   int offspringPopulationSize = populationSize - parentPopulationSize;
-
-   //Copy selected parent genomes into new population
-   for(int i = 0; i < parentPopulationSize; i++)
-   {
-      newPopulation.setRow(countNewPopulationSize, getIndividual(rank[i]));
-      countNewPopulationSize++;
-   }
-
-   int parentCount = 0;
-
-   for(int i = parentPopulationSize; i < populationSize; i++)
-   {
-      parent1 = getIndividual(rank[parentCount]);
-
-      int parent2CandidateIndex = 0;
-      do
-      {
-         // Choose parent 2 at random from the selected parent population pool
-         double random = (double)rand()/(RAND_MAX+1.0);
-         parent2CandidateIndex = (int)(parentPopulationSize*random);
-      }while(parent2CandidateIndex == rank[parentCount]);
-
-      if(parent2CandidateIndex >= parentPopulationSize)
-      {
-         std::cerr << std::endl 
-                << "Flood Error: EvolutionaryAlgorithm class." << std::endl
-                << "void performStandardRecombination(void) method." << std::endl
-                << "parent2CandidateIndex >= parentPopulationSize" 
-                << " parent2CandidateIndex = " << parent2CandidateIndex 
-                << " parentPopulationSize = " << parentPopulationSize 
-                << std::endl
-                << std::endl;
-
-         exit(1);
-      }
-      parent2 = getIndividual(rank[parent2CandidateIndex]);
-
-      // Perform inediate recombination between parent 1 and parent 2
-      for(int j = 0; j < numberOfFreeParameters; j++)
-      {
-         // Choose the scaling factor to be a random number between
-         // -recombinationSize and 1+recombinationSize for each
-         // variable anew.
-
-         double random = (double)rand()/(RAND_MAX+1.0);
-
-         double scalingFactor = -1.0*recombinationSize + (1.0 + recombinationSize)*random;
-
-         offspring[j] = scalingFactor*parent1[j] + (1.0 - scalingFactor)*parent2[j];
-      }
-
-      // Add offspring to newPopulation matrix
-      newPopulation.setRow(countNewPopulationSize, offspring);   
-      countNewPopulationSize++;
-
-      // Ensuring parent 1 is picked in a round robin manner
-      if(parentCount < parentPopulationSize)
-      {
-         parentCount++;
-      }
-      else
-      {
-         parentCount = 0;
-      }
-   }
-
-   // Set new population
-   population = newPopulation;
-}
-
 
 // void performNormalMutation(void) method
 
@@ -2576,6 +2335,7 @@ void EvolutionaryAlgorithm::performStandardRecombination(void)
 /// @see performUniformMutation(void).
 /// @see train(void).
 
+
 void EvolutionaryAlgorithm::performNormalMutation(void)
 {
    const double pi = 3.141592654;
@@ -2588,9 +2348,9 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
    for(int i = 0; i < populationSize; i++)
    {
-      if (rank[i] > (0.90 * populationSize)) 
+      if (rank[i] > (0.95 * populationSize)) 
       {
-          // Dont dare touch the top 10%
+          // Dont dare touch the top 5%
           continue;
       }
       individual = getIndividual(i);
@@ -2629,59 +2389,7 @@ void EvolutionaryAlgorithm::performNormalMutation(void)
 
       setIndividual(i, individual);
    }
-} 
-
-void EvolutionaryAlgorithm::performOffspringsOnlyMutation(void)
-{
-   const double pi = 3.141592654;
-
-   MultilayerPerceptron* multilayerPerceptron = objectiveFunctional->getMultilayerPerceptron();
-     
-   int numberOfFreeParameters = multilayerPerceptron->getNumberOfFreeParameters();
-
-   Vector<double> individual(numberOfFreeParameters);
-
-   int parentPopulationSize = ((double)populationSize/100.0)*crossoverPercentage;
-
-   for(int i = parentPopulationSize; i < populationSize; i++)
-   {
-      individual = getIndividual(i);
-
-      for(int j = 0; j < numberOfFreeParameters; j++)
-      {
-         // Random number between 0 and 1
-
-         double pointer = (double)rand()/(RAND_MAX+1.0);
-
-         if(pointer < mutationRate)
-         {
-            // Random numbers between 0 and 1
-
-            double random1 = 0.0;
-            
-            do // random1 cannot be zero
-            {
-               random1 = (double)rand()/(RAND_MAX+1.0);
-            
-            }while(random1 == 0);
-
-            double random2 = (double)rand()/(RAND_MAX+1.0);
-
-            // Box-Muller transformation
-
-            double mean = 0.0;
-            double standardDeviation = mutationRange;
-
-            double normallyDistributedRandomNumber 
-            = mean + sqrt(-2.0*log(random1))*sin(2.0*pi*random2)*standardDeviation;
-
-            individual[j] += normallyDistributedRandomNumber;
-         }
-      }
-
-      setIndividual(i, individual);
-   }
-} 
+}  
 
 
 // void performUniformMutation(void) method
@@ -2790,21 +2498,7 @@ void EvolutionaryAlgorithm::train(void)
 
    // Evaluation of population
 
-   switch(evaluationMethod)
-   {
-      case SingleTrial:
-      { 
-         evaluatePopulation_singleTrial();
-      }
-
-      break;
-      case MultiTrial:
-      {
-         evaluatePopulation_multiTrial();
-      }
-
-      break;
-   }
+   evaluatePopulation();
 
    // Check for best individual
 
@@ -2983,18 +2677,11 @@ void EvolutionaryAlgorithm::train(void)
       switch(fitnessAssignmentMethod)
       {
          case LinearRanking:
-            { 
-                performLinearRankingFitnessAssignment();
-            }
+         { 
+            performLinearRankingFitnessAssignment();
+         }
 
-            break;
-
-	 case DecendingRanking:
-	    {
-	        performDecendingRanking();
-	    }
-
-	    break;
+         break;
       }
 
       // Selection
@@ -3021,11 +2708,6 @@ void EvolutionaryAlgorithm::train(void)
          }
 
          break;
-
-	 case None:
-	 {
-            break;
-	 }
       }
 
       // Recombination
@@ -3045,11 +2727,6 @@ void EvolutionaryAlgorithm::train(void)
          } 
 
          break;
-
-	 case Standard:
-	 {
-	    performStandardRecombination();
-	 }
       }
 
       // Mutation
@@ -3069,42 +2746,11 @@ void EvolutionaryAlgorithm::train(void)
          }
 
          break;
-
-         case OffspringsOnly:
-         {
-            performOffspringsOnlyMutation();
-         }
-
-         break;
       }
-
-      double meanEvaluation = evaluation.calculateMean();
-
-      Vector<double> sortedEvaluation(populationSize);
-      sortedEvaluation = evaluation;
-      std::sort(sortedEvaluation.begin(), sortedEvaluation.end(), std::less<double>());
-      double worstEvaluation = sortedEvaluation[populationSize-1];
-
-
-      //plot_file.write(generation, evaluation[rank[0]]);
-      //plot_file.write(generation, evaluation[rank[0]], meanEvaluation);
 
       // Evaluation of new population
-      switch(evaluationMethod)
-      {
-         case SingleTrial:
-         { 
-            evaluatePopulation_singleTrial();
-         }
 
-         break;
-         case MultiTrial:
-         {
-            evaluatePopulation_multiTrial();
-         }
-
-         break;
-      }
+      evaluatePopulation();
 
       // Check for best individual
       // sachins: reset best evalulation, so that for every population, there is a bestevaluation
@@ -3126,10 +2772,9 @@ void EvolutionaryAlgorithm::train(void)
             multilayerPerceptron->setFreeParameters(bestIndividual);              
          }
       }
-      /* The earlier best eval were showing strange values, hence put in the bestEvaluation to plot it */
-      plot_file.write(generation, bestEvaluation, meanEvaluation, worstEvaluation);
-      
-      //plot_file.write(generation, bestEvaluation);
+
+      plot_file.write(generation, bestEvaluation);
+
 
 
       // Elapsed time
@@ -3177,7 +2822,7 @@ void EvolutionaryAlgorithm::train(void)
 
       // Mean evaluation
 
-      //double meanEvaluation = evaluation.calculateMean();
+      double meanEvaluation = evaluation.calculateMean();
 
       if(reserveMeanEvaluationHistory)
       {
@@ -3303,12 +2948,6 @@ void EvolutionaryAlgorithm::train(void)
 
       selection = newSelection;
    }
-   /* Save the Evolutionary Object into the file */
-   if (!save_to_filename.empty()) 
-   {
-       save((char *)save_to_filename.c_str());
-   }
-
 }
 
 
@@ -3383,10 +3022,6 @@ void EvolutionaryAlgorithm::print(void)
    if(fitnessAssignmentMethod == LinearRanking)
    {
       std::cout << "Linear ranking" << std::endl;
-   } 
-   else if(fitnessAssignmentMethod == DecendingRanking)
-   {
-       std::cout << "Decending ranking" << std::endl;
    }
 
    // Selection method
@@ -3400,10 +3035,6 @@ void EvolutionaryAlgorithm::print(void)
    else if(selectionMethod == StochasticUniversalSampling)
    {
       std::cout << "Stochastic universal sampling" << std::endl;
-   }
-   else if(selectionMethod == EliteSampling)
-   {
-       std::cout << "Elite Sampling" << std::endl;
    }
 
    // Recombination method
@@ -3587,89 +3218,49 @@ void EvolutionaryAlgorithm::save(char* filename)
 
    file << "FitnessAssignmentMethod:" << std::endl;
 
-   switch (fitnessAssignmentMethod)
+   if(fitnessAssignmentMethod == LinearRanking)
    {
-       case LinearRanking:
-          file << "LinearRanking" << std::endl;
-          break;
-       case DecendingRanking:
-          file << "DecendingRanking" << std::endl;
-          break;
+      file << "LinearRanking" << std::endl;
    }
 
    // Selection method
 
    file << "SelectionMethod:" << std::endl;
 
-   switch (selectionMethod)
+   if(selectionMethod == RouletteWheel)
    {
-       case RouletteWheel:
-          file << "RouletteWheel" << std::endl;
-          break;
-
-       case StochasticUniversalSampling:
-          file << "StochasticUniversalSampling" << std::endl;
-          break;
-
-       case EliteSampling:
-          file << "EliteSampling" << std::endl;
-          break;
+      file << "RouletteWheel" << std::endl;
+   }
+   else if(selectionMethod == StochasticUniversalSampling)
+   {
+      file << "StochasticUniversalSampling" << std::endl;
    }
 
    // Recombination method
 
    file << "RecombinationMethod:" << std::endl;
 
-   switch (recombinationMethod)
+   if(recombinationMethod == Line)
    {
-       case Line:
-          file << "Line" << std::endl;
-          break;
-
-       case Intermediate:
-          file << "Intermediate" << std::endl;
-          break;
-        
-       case Standard:
-          file << "Standard" << std::endl;
-          break;
+      file << "Line" << std::endl;
+   }
+   else if(recombinationMethod == Intermediate)
+   {
+      file << "Intermediate" << std::endl;
    }
 
    // Mutation method
 
    file << "MutationMethod:" << std::endl;
 
-   switch (mutationMethod)
+   if(mutationMethod == Normal)
    {
-       case Normal:
-          file << "Normal" << std::endl;
-          break;
-       
-       case Uniform:
-          file << "Uniform" << std::endl;
-          break;
-
-       case OffspringsOnly:
-          file << "OffspringsOnly" << std::endl;
-          break;
-
+      file << "Normal" << std::endl;
    }
-
-   // Evaluation Method
-
-   file << "EvaluationMethod:" << std::endl;
-
-   switch (evaluationMethod)
+   else if(mutationMethod == Uniform)
    {
-       case SingleTrial:
-           file << "SingleTrial" << std::endl;
-           break;
-
-       case MultiTrial:
-           file << "MultiTrial" << std::endl;
-           break;
+      file << "Uniform" << std::endl;
    }
-
 
    // Training parameters
 
@@ -3797,7 +3388,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Cannot open evolutionary algorithm object data file: "<< filename  << std::endl
+                << "Cannot open evolutionary algorithm object data file."  << std::endl
 				<< std::endl;
 
       exit(1);
@@ -3807,7 +3398,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       if(display)
       {
          std::cout << std::endl
-                   << "Loading evolutionary algorithm object from data file: " << filename
+                   << "Loading evolutionary algorithm object from data file..."  
                    << std::endl;
       }
    }
@@ -3865,12 +3456,12 @@ void EvolutionaryAlgorithm::load(char* filename)
 
    file >> word;
 
-   if(word != "FitnessAssignmentMethod:")
+   if(word != "FitnessAssingmentMethod:")
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "FitnessAssignmentMethod:Unknown file format."  <<  word << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3881,16 +3472,12 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       fitnessAssignmentMethod = LinearRanking;
    }
-   else if(word == "DecendingRanking")
-   {
-       fitnessAssignmentMethod = DecendingRanking;
-   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "LinearRanking instance:Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3904,7 +3491,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "SelectionMethod:Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3919,16 +3506,12 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       selectionMethod = StochasticUniversalSampling;
    } 
-   else if(word == "EliteSampling")
-   {
-       selectionMethod = EliteSampling;
-   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "selectionMethod instance: Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3942,7 +3525,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "RecombinationMethod:Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3957,16 +3540,12 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       recombinationMethod = Intermediate;
    } 
-   else if(word == "Standard")
-   {
-       recombinationMethod = Standard;
-   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "recombinationMethod instance: Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3980,7 +3559,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Mutation method:Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
@@ -3995,50 +3574,15 @@ void EvolutionaryAlgorithm::load(char* filename)
    {
       mutationMethod = Uniform;
    } 
-   else if(word == "OffspringsOnly")
-   {
-       mutationMethod = OffspringsOnly;
-   }
    else
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Mutation method instance:Unknown file format."  << std::endl;
+                << "Unknown file format."  << std::endl;
 
       exit(1);   
    }
-
-   file >> word;
-
-   if(word != "EvaluationMethod:")
-   {
-       std::cerr << std::endl
-           << "Flood Error: EvolutionaryAlgorithm class." << std::endl
-           << "void load(char*) method." << std::endl
-           << "EvaluationMethod:Unknown file format."  << std::endl;
-       exit(1);   
-   }
-
-   file >> word;
-
-   if(word == "SingleTrial")
-   {
-       evaluationMethod = SingleTrial;
-   }
-   else if(word == "MultiTrial")
-   {
-       evaluationMethod = MultiTrial;
-   }
-   else 
-   {
-       std::cerr << std::endl
-           << "Flood Error: EvolutionaryAlgorithm class." << std::endl
-           << "void load(char*) method." << std::endl
-           << "EvaluationMethod Instance:Unknown file format."  << std::endl;
-       exit(1);   
-   }
-
 
    // Training parameters
 
@@ -4051,7 +3595,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Selective pressure:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4063,12 +3607,12 @@ void EvolutionaryAlgorithm::load(char* filename)
 
    file >> word;
 
-   if(word != "RecombinationSize:")
+   if(word != "RecombinationSize")
    {
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Recombination size:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4085,7 +3629,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "MutationRate:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4102,7 +3646,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "MutationRange:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4121,7 +3665,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "EvaluationGoal:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4138,7 +3682,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "MaximumTime:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4155,7 +3699,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "MaximumNumberOfGenerations:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4174,7 +3718,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "Display:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4191,7 +3735,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "DisplayPeriod:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4208,7 +3752,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveElapsedTimeHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4225,7 +3769,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveMeanNormHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4242,7 +3786,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveStandardDeviationNormHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4259,7 +3803,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveBestNormHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4276,7 +3820,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveMeanEvaluationHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4293,7 +3837,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveStandardDeviationEvaluationHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4310,7 +3854,7 @@ void EvolutionaryAlgorithm::load(char* filename)
       std::cerr << std::endl
                 << "Flood Error: EvolutionaryAlgorithm class." << std::endl
                 << "void load(char*) method." << std::endl
-                << "ReserveBestEvaluationHistory:Unknown file format. " << word << "???" <<std::endl
+                << "Unknown file format. " << word << "???" <<std::endl
                 << std::endl;
 
       exit(1);   
@@ -4493,16 +4037,6 @@ void EvolutionaryAlgorithm::saveTrainingHistory(char* filename)
      
 }
 
-// void set_save_to_filename(char*) method
-
-/// This method sets the filename to save the Evolutionary object to  
-/// upon, completion of training.
-//
-/// @param filename Evolutionary object filename. 
-void EvolutionaryAlgorithm::setSaveToFilename(char *filename)
-{
-    save_to_filename = filename;
-}
 
 }
 

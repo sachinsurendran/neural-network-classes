@@ -249,53 +249,19 @@ double TennixTrainer::calculateEvaluation(void)
           //std::cout << "HIT" << std::endl;
           keys[HIT] = 1;
       }
-/*
-      if (output[UP] > 0) {
-          //std::cout << "UP" << std::endl;
-          keys[UP] = 1;
-      }
-      else if (output[UP] < 0 ) {
-          //std::cout << "DOWN" << std::endl;
-          keys[DOWN] = 1;
-      }
-
-      if (output[HIT] > 0 ) {
-          //std::cout << "HIT" << std::endl;
-          keys[HIT] = 1;
-      } */
-
-      /* The difference between UP and DOWN needs to be greater than a threshold , else the player just stands where it is */
-
-#define THRESHOLD 0.2
 
       if (keys[UP] && keys[DOWN])
       {
-          // Make the stronger one be sent
+          /* Make the stronger one be sent */
           if (output[UP] >= output[DOWN])
           {
-//              if (output[UP] - output[DOWN] > THRESHOLD )
-//              {
-                keys[UP] = 1;
-                keys[DOWN] = 0;
-//              } else {
-//                  keys[UP] = keys[DOWN] = 0;
-//              }
+              keys[UP] = 1;
+              keys[DOWN] = 0;
           } else {
-//              if (output[DOWN] - output[UP] > THRESHOLD )
-//              {
-                keys[UP] = 0;
-                keys[DOWN] = 1;
-//              } else {
-//                  keys[UP] = keys[DOWN] = 0;
-//              }
+              keys[UP] = 0;
+              keys[DOWN] = 1;
           }
       }
-
-#ifdef TEST_FITNESS_FOR_NO_INPUT
-      // Used to test fitness for a player which does not move nor hit, This data can be used to 
-      // determine the window to penalize non moving players
-      keys[UP] = keys[DOWN] = keys[HIT] = 0;
-#endif
 
 
       evaluator.send_NN_response(keys, 3);
@@ -313,33 +279,25 @@ double TennixTrainer::calculateEvaluation(void)
       //sumSquaredError += (output-target).dot(output-target); 
    }
 
-#define BEST_AI_FITNESS 950000 // changes with fitness weightages, so recalculate everytime any change
-#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
 
-   /* Avinash: Check if Darwin is the winner of the game */
-   if(gamestate.winner == 1)
-   {
-      // If so print the fitness value and exit NN training.
-      std::cout << std::endl << "Evaluation goal reached - Darwin has won the game" << std::endl
-                << "Evaluation: " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
-      exit(0);
-   }
+
+#define BEST_AI_FITNESS 70000 // changes with fitness weightages, so recalculate everytime any change
+
+#define PENALISE_NON_MOVER 1 // Comment this line , if you dont want to penalise non movers
 
 #ifdef PENALISE_NON_MOVER
 
-   if (gamestate.fitness < 0 && gamestate.fitness > -500)  /* Found range for inactive players */
+   if (gamestate.fitness < 500 && gamestate.fitness > -500)  /* Found range for inactive players */
    {
-       /* Calculate the NONMOVER score using  TEST_FITNESS_FOR_NO_INPUT */
-       //std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
-       return (BEST_AI_FITNESS + 30000); /* When player does not move a bit, penalise him */  
+       std::cout << "Fitness = " << BEST_AI_FITNESS + 10000 << std::endl;
+       return (BEST_AI_FITNESS + 10000); /* When player does not move a bit, penalise him */  
    }
 #endif
 
    /* Best AI players fitness is BEST_AI_FITNESS (Note using current calculation method, needs update if it changes ) */
 
 //Lower the fitness value the better
-   //std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
-   //std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << "   Winner = " << gamestate.winner << std::endl;
+   std::cout << "Fitness = " << (BEST_AI_FITNESS - gamestate.fitness) << std::endl;
 
    return (BEST_AI_FITNESS - gamestate.fitness);
 }
