@@ -1,0 +1,79 @@
+% Flood Neural Network. Multilayer Perceptron Object.
+NumberOfInputs:
+8
+NumberOfHiddenLayers:
+1
+NumbersOfHiddenNeurons:
+6 
+NumberOfOutputs:
+1
+HiddenLayersActivationFunction:
+HyperbolicTangent 
+OutputLayerActivationFunction:
+Linear
+NameOfInputVariables:
+x0 x1 x2 x3 x4 x5 x6 x7 
+NameOfOutputVariables:
+y 
+UnitsOfInputVariables:
+x0 x1 x2 x3 x4 x5 x6 x7 
+UnitsOfOutputVariables:
+y 
+DescriptionOfInputVariables:
+x0 x1 x2 x3 x4 x5 x6 x7 
+DescriptionOfOutputVariables:
+y 
+MeanOfInputVariables:
+3.80729 120.045 68.8073 20.5833 79.8889 31.892 0.479937 33.1858 
+StandardDeviationOfInputVariables:
+3.34602 32.6024 19.288 15.6445 115.803 8.03312 0.335886 11.7763 
+MeanOfOutputVariables:
+0.34375 
+StandardDeviationOfOutputVariables:
+0.475372 
+MinimumOfInputVariables:
+0 0 0 0 0 0 0.078 21 
+MaximumOfInputVariables:
+17 198 122 63 846 67.1 2.42 81 
+MinimumOfOutputVariables:
+0 
+MaximumOfOutputVariables:
+1 
+LowerBoundOfOutputVariables:
+-1e+099 
+UpperBoundOfOutputVariables:
+1e+099 
+NeuralParameters:
+0.213711 -0.247232 -1.49427 -0.196829 0.860048 -0.764586 -0.497139 -0.462462 -0.615926 -1.7943 0.972758 -1.95548 2.05119 1.11078 0.544813 -0.299615 -0.939224 -0.76941 -0.255881 0.364978 1.8126 -0.60681 2.03037 -2.07907 0.495908 0.351987 -1.5238 1.66317 -0.797017 -0.750037 1.70339 -1.57327 0.248758 -0.611796 -1.60645 -0.491305 0.812749 0.610872 -0.866207 -0.814918 0.34333 0.280565 -0.288863 -2.34564 0.40718 0.0484449 -0.780515 -0.51985 -0.0513459 1.86328 -0.166078 -2.8016 1.32808 -0.88794 0.202141 -0.380918 0.018645 0.221042 -0.219076 -0.0709993 -0.182176 
+NumberOfIndependentParameters:
+0
+NameOfIndependentParameters:
+
+UnitsOfIndependentParameters:
+
+DescriptionOfIndependentParameters:
+
+MeanOfIndependentParameters:
+
+StandardDeviationOfIndependentParameters:
+
+MinimumOfIndependentParameters:
+
+MaximumOfIndependentParameters:
+
+LowerBoundOfIndependentParameters:
+
+UpperBoundOfIndependentParameters:
+
+IndependentParameters:
+
+PreAndPostProcessingMethod:
+MeanAndStandardDeviation
+NumericalDifferentiationMethod:
+CentralDifferences
+DisplayOutOfRangeWarning:
+0
+Display:
+1
+NumericalEpsilon:
+1e-006
