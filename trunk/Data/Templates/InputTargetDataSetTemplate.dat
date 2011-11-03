@@ -1,0 +1,21 @@
+% Flood Neural Network. Input-Target Data Set Object.
+NumberOfSamples:
+int
+NumberOfInputVariables:
+int
+NumberOfTargetVariables:
+int
+NameOfInputVariables:
+Vector<std::string>
+NameOfTargetVariables:
+Vector<std::string>
+UnitsOfInputVariables:
+Vector<std::string>
+UnitsOfTargetVariables:
+Vector<std::string>
+DescriptionOfInputVariables:
+Vector<std::string>
+DescriptionOfTargetVariables:
+Vector<std::string>
+InputAndTargetData:
+Matrix<double> Matrix<double>
